@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>PawDoc — AI Vet Assistant</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --teal:#00C9A7;--teal2:#00A88C;--teal3:#007A65;
+  --bg:#060D0B;--bg2:#0C1A16;--bg3:#112219;--bg4:#162C22;
+  --txt:#E8FDF6;--txt2:#B8EDD8;--txt3:#7DCFAD;--txt4:#4AAF87;
+  --gold:#FFD166;--red:#FF6B6B;--blue:#74B9FF;
+  --border:rgba(0,201,167,.1);--border2:rgba(0,201,167,.2);
+  --pro:#FFD166;--plus:#74B9FF;--basic:#00C9A7;
+}
+html,body{background:var(--bg);min-height:100vh;scroll-behavior:smooth}
+body{font-family:'Bricolage Grotesque',sans-serif;color:var(--txt);overflow-x:hidden}
+
+/* ── NAV ── */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;height:64px;background:rgba(6,13,11,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px}
+.nav-logo{font-size:20px;font-weight:800;color:var(--txt);display:flex;align-items:center;gap:8px;letter-spacing:-.5px}
+.nav-logo span{color:var(--teal)}
+.nav-logo-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--teal),var(--teal2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.nav-links{display:flex;align-items:center;gap:6px}
+.nav-link{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:500;color:var(--txt3);cursor:pointer;transition:.15s;border:none;background:none;font-family:'Bricolage Grotesque',sans-serif}
+.nav-link:hover{color:var(--txt);background:rgba(0,201,167,.06)}
+.nav-cta{background:var(--teal);color:#000;font-weight:700;padding:8px 20px;border-radius:8px;font-size:13px;cursor:pointer;border:none;font-family:'Bricolage Grotesque',sans-serif;transition:.15s;letter-spacing:.3px}
+.nav-cta:hover{background:var(--teal2)}
+.lang-sel{background:rgba(0,201,167,.08);border:1px solid var(--border2);color:var(--txt3);padding:6px 10px;border-radius:7px;font-size:11px;font-family:'Bricolage Grotesque',sans-serif;outline:none;cursor:pointer}
+.lang-sel option{background:#0C1A16}
+
+/* ── HERO ── */
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:80px 24px 40px}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(0,201,167,.08) 0%,transparent 70%)}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(0,201,167,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,201,167,.03) 1px,transparent 1px);background-size:48px 48px}
+.hero-blob{position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(0,201,167,.05) 0%,transparent 60%);top:-100px;left:50%;transform:translateX(-50%)}
+.hero-con{position:relative;z-index:2;text-align:center;max-width:700px}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(0,201,167,.08);border:1px solid var(--border2);border-radius:30px;padding:5px 14px;font-size:11px;color:var(--teal);letter-spacing:2px;text-transform:uppercase;font-weight:600;margin-bottom:24px}
+.hero-badge-dot{width:6px;height:6px;background:var(--teal);border-radius:50%;animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.hero-title{font-size:clamp(2.8rem,8vw,5rem);font-weight:800;line-height:1.05;letter-spacing:-2px;margin-bottom:20px}
+.hero-title span{color:var(--teal)}
+.hero-title .sub{display:block;font-size:clamp(1.4rem,4vw,2.2rem);font-weight:400;color:var(--txt3);letter-spacing:-1px;margin-top:4px}
+.hero-desc{font-size:16px;color:var(--txt3);line-height:1.7;max-width:520px;margin:0 auto 32px;font-weight:400}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:48px}
+.btn-primary{background:var(--teal);color:#000;font-weight:700;padding:14px 28px;border-radius:10px;font-size:15px;cursor:pointer;border:none;font-family:'Bricolage Grotesque',sans-serif;transition:.2s;display:flex;align-items:center;gap:8px}
+.btn-primary:hover{background:var(--teal2);transform:translateY(-1px)}
+.btn-secondary{background:rgba(0,201,167,.08);color:var(--teal);font-weight:600;padding:14px 28px;border-radius:10px;font-size:15px;cursor:pointer;border:1px solid var(--border2);font-family:'Bricolage Grotesque',sans-serif;transition:.2s}
+.btn-secondary:hover{background:rgba(0,201,167,.14)}
+.hero-stats{display:flex;gap:32px;justify-content:center;flex-wrap:wrap}
+.hstat{text-align:center}
+.hstat-num{font-size:28px;font-weight:800;color:var(--teal);letter-spacing:-1px}
+.hstat-lbl{font-size:11px;color:var(--txt4);letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+
+/* ── DEMO / AI SECTION ── */
+.demo-section{padding:80px 24px;max-width:900px;margin:0 auto}
+.sec-label{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--teal);font-weight:600;margin-bottom:12px;font-family:'DM Mono',monospace}
+.sec-title{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:800;letter-spacing:-1px;margin-bottom:12px;line-height:1.1}
+.sec-title span{color:var(--teal)}
+.sec-desc{font-size:15px;color:var(--txt3);line-height:1.7;max-width:540px;margin-bottom:40px}
+
+.demo-card{background:var(--bg2);border:1px solid var(--border);border-radius:20px;overflow:hidden}
+.demo-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.demo-avatar{width:38px;height:38px;background:linear-gradient(135deg,var(--teal),var(--teal2));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.demo-name{font-size:14px;font-weight:700;color:var(--txt)}
+.demo-status{font-size:10px;color:var(--teal);display:flex;align-items:center;gap:4px;margin-top:1px}
+.demo-status::before{content:'';width:5px;height:5px;background:var(--teal);border-radius:50%;display:inline-block}
+
+/* animal selector */
+.animal-row{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+.animal-row::-webkit-scrollbar{display:none}
+.animal-btn{flex-shrink:0;padding:7px 14px;border-radius:20px;border:1px solid var(--border);background:none;color:var(--txt3);font-size:12px;font-weight:500;cursor:pointer;font-family:'Bricolage Grotesque',sans-serif;transition:.15s;display:flex;align-items:center;gap:5px}
+.animal-btn.on{background:rgba(0,201,167,.1);border-color:var(--teal);color:var(--teal)}
+.animal-btn:active{transform:scale(.96)}
+
+.chat-msgs{padding:20px;display:flex;flex-direction:column;gap:12px;min-height:300px;max-height:420px;overflow-y:auto;scroll-behavior:smooth}
+.chat-msgs::-webkit-scrollbar{width:3px}
+.chat-msgs::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+.msg{max-width:80%;display:flex;flex-direction:column;gap:3px}
+.msg.bot{align-self:flex-start}
+.msg.user{align-self:flex-end}
+.msg-bubble{padding:10px 14px;border-radius:14px;font-size:13px;line-height:1.65}
+.msg.bot .msg-bubble{background:var(--bg3);border:1px solid var(--border);color:var(--txt);border-bottom-left-radius:4px}
+.msg.user .msg-bubble{background:linear-gradient(135deg,var(--teal),var(--teal2));color:#000;font-weight:500;border-bottom-right-radius:4px}
+.msg-time{font-size:9px;color:var(--txt4);padding:0 4px;font-family:'DM Mono',monospace}
+.msg.user .msg-time{text-align:right}
+.typing{display:flex;gap:4px;align-items:center;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:14px;border-bottom-left-radius:4px;align-self:flex-start;width:58px}
+.typing span{width:6px;height:6px;background:var(--txt4);border-radius:50%;animation:tdot .9s infinite}
+.typing span:nth-child(2){animation-delay:.15s}
+.typing span:nth-child(3){animation-delay:.3s}
+@keyframes tdot{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+
+/* severity badge */
+.severity{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:8px;font-size:10px;font-weight:700;letter-spacing:.5px;margin-top:6px}
+.sev-low{background:rgba(0,201,167,.1);color:var(--teal);border:1px solid rgba(0,201,167,.2)}
+.sev-mid{background:rgba(255,209,102,.1);color:var(--gold);border:1px solid rgba(255,209,102,.2)}
+.sev-high{background:rgba(255,107,107,.1);color:var(--red);border:1px solid rgba(255,107,107,.2)}
+
+/* image upload */
+.img-preview{width:100%;max-height:160px;object-fit:cover;border-radius:10px;margin-bottom:8px;border:1px solid var(--border);display:none}
+
+.chat-input-area{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:8px;align-items:flex-end}
+.chat-inp{flex:1;padding:10px 13px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;color:var(--txt);font-size:13px;font-family:'Bricolage Grotesque',sans-serif;outline:none;transition:.15s;resize:none;min-height:40px;max-height:100px}
+.chat-inp:focus{border-color:var(--teal)}
+.img-btn{width:40px;height:40px;background:rgba(0,201,167,.08);border:1px solid var(--border2);border-radius:10px;color:var(--teal);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s;flex-shrink:0}
+.img-btn:hover{background:rgba(0,201,167,.14)}
+.send-btn{width:40px;height:40px;background:var(--teal);border:none;border-radius:10px;color:#000;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s;flex-shrink:0}
+.send-btn:hover{background:var(--teal2)}
+.send-btn:disabled{opacity:.4;cursor:not-allowed}
+#img-input{display:none}
+
+.quick-replies{padding:0 20px 12px;display:flex;gap:6px;flex-wrap:wrap}
+.qr{padding:5px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:15px;font-size:11px;color:var(--txt3);cursor:pointer;transition:.15s;font-family:'Bricolage Grotesque',sans-serif}
+.qr:hover{border-color:var(--teal);color:var(--teal);background:rgba(0,201,167,.06)}
+
+/* disclaimer */
+.disclaimer{margin:12px 20px;padding:10px 13px;background:rgba(255,209,102,.05);border:1px solid rgba(255,209,102,.15);border-radius:9px;font-size:10px;color:rgba(255,209,102,.7);line-height:1.6;display:flex;gap:6px}
+.disclaimer i{font-size:13px;color:var(--gold);flex-shrink:0;margin-top:1px}
+
+/* ── FEATURES ── */
+.features-section{padding:80px 24px;max-width:1000px;margin:0 auto}
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:40px}
+.feat{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:24px;transition:.2s;position:relative;overflow:hidden}
+.feat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--teal),transparent);opacity:0;transition:.2s}
+.feat:hover::before{opacity:1}
+.feat:hover{border-color:var(--border2);transform:translateY(-2px)}
+.feat-icon{width:44px;height:44px;background:rgba(0,201,167,.08);border:1px solid var(--border2);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:16px;color:var(--teal)}
+.feat-title{font-size:15px;font-weight:700;color:var(--txt);margin-bottom:8px}
+.feat-desc{font-size:13px;color:var(--txt3);line-height:1.7}
+.feat-badge{display:inline-flex;align-items:center;gap:4px;margin-top:10px;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;border-radius:5px}
+.fb-basic{background:rgba(0,201,167,.1);color:var(--basic)}
+.fb-plus{background:rgba(116,185,255,.1);color:var(--plus)}
+.fb-pro{background:rgba(255,209,102,.1);color:var(--pro)}
+.fb-free{background:rgba(255,255,255,.05);color:var(--txt4)}
+
+/* ── ANIMALS ── */
+.animals-section{padding:60px 24px;max-width:1000px;margin:0 auto}
+.animals-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:10px;margin-top:32px}
+.animal-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:20px 10px;text-align:center;transition:.2s;cursor:pointer}
+.animal-card:hover{border-color:var(--border2);background:var(--bg3);transform:translateY(-2px)}
+.animal-emoji{font-size:32px;display:block;margin-bottom:8px}
+.animal-name{font-size:11px;color:var(--txt3);font-weight:500}
+
+/* ── PRICING ── */
+.pricing-section{padding:80px 24px;max-width:1000px;margin:0 auto}
+.pricing-toggle{display:flex;align-items:center;gap:10px;margin:0 auto 40px;width:fit-content;background:var(--bg2);border:1px solid var(--border);border-radius:30px;padding:4px}
+.ptog-btn{padding:8px 20px;border-radius:24px;font-size:13px;font-weight:600;cursor:pointer;border:none;background:none;color:var(--txt3);font-family:'Bricolage Grotesque',sans-serif;transition:.15s}
+.ptog-btn.on{background:var(--teal);color:#000}
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.plan{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:28px;position:relative;transition:.2s}
+.plan.popular{border-color:var(--teal);background:var(--bg3)}
+.plan-pop-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--teal);color:#000;font-size:10px;font-weight:800;padding:4px 14px;border-radius:20px;letter-spacing:1px;white-space:nowrap}
+.plan-name{font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px}
+.plan-free .plan-name{color:var(--txt4)}
+.plan-basic .plan-name{color:var(--basic)}
+.plan-plus .plan-name{color:var(--plus)}
+.plan-pro .plan-name{color:var(--pro)}
+.plan-price{font-size:40px;font-weight:800;letter-spacing:-2px;line-height:1;margin-bottom:4px}
+.plan-free .plan-price{color:var(--txt)}
+.plan-basic .plan-price{color:var(--basic)}
+.plan-plus .plan-price{color:var(--plus)}
+.plan-pro .plan-price{color:var(--pro)}
+.plan-period{font-size:12px;color:var(--txt4);margin-bottom:4px}
+.plan-first{font-size:11px;color:var(--gold);margin-bottom:20px;font-weight:600}
+.plan-sep{height:1px;background:var(--border);margin-bottom:20px}
+.plan-features{display:flex;flex-direction:column;gap:9px;margin-bottom:24px}
+.pf{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--txt3)}
+.pf i{color:var(--teal);font-size:14px;flex-shrink:0;margin-top:1px}
+.pf.no{color:var(--txt4)}
+.pf.no i{color:var(--txt4)}
+.plan-btn{width:100%;padding:12px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;border:none;font-family:'Bricolage Grotesque',sans-serif;transition:.15s;letter-spacing:.5px}
+.plan-free .plan-btn{background:rgba(255,255,255,.06);color:var(--txt3);border:1px solid var(--border)}
+.plan-basic .plan-btn{background:var(--basic);color:#000}
+.plan-plus .plan-btn{background:var(--plus);color:#000}
+.plan-pro .plan-btn{background:var(--pro);color:#000}
+.plan-btn:hover{opacity:.88;transform:translateY(-1px)}
+
+/* ── FAQ ── */
+.faq-section{padding:80px 24px;max-width:680px;margin:0 auto}
+.faq-list{display:flex;flex-direction:column;gap:8px;margin-top:40px}
+.faq-item{background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.faq-q{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:14px;font-weight:600;color:var(--txt);gap:10px}
+.faq-q i{color:var(--teal);font-size:16px;transition:.2s;flex-shrink:0}
+.faq-item.open .faq-q i{transform:rotate(45deg)}
+.faq-a{padding:0 20px;font-size:13px;color:var(--txt3);line-height:1.7;max-height:0;overflow:hidden;transition:.25s}
+.faq-item.open .faq-a{max-height:200px;padding:0 20px 16px}
+
+/* ── FOOTER ── */
+.footer{padding:40px 24px;border-top:1px solid var(--border);text-align:center}
+.footer-logo{font-size:18px;font-weight:800;color:var(--txt);margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:6px}
+.footer-logo span{color:var(--teal)}
+.footer-disc{font-size:11px;color:var(--txt4);line-height:1.7;max-width:500px;margin:0 auto 20px}
+.footer-links{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.footer-link{font-size:12px;color:var(--txt4);cursor:pointer;transition:.15s}
+.footer-link:hover{color:var(--teal)}
+
+/* ── MODAL (auth) ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;opacity:0;pointer-events:none;transition:.25s;backdrop-filter:blur(6px);display:flex;align-items:flex-end;justify-content:center}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:#0C1A16;border:1px solid var(--border2);border-radius:20px 20px 0 0;width:100%;max-width:430px;padding:28px 24px 36px;transform:translateY(100%);transition:.3s cubic-bezier(.4,0,.2,1)}
+.modal-overlay.open .modal{transform:translateY(0)}
+.modal-title{font-size:20px;font-weight:800;color:var(--txt);margin-bottom:4px;letter-spacing:-.5px}
+.modal-sub{font-size:13px;color:var(--txt3);margin-bottom:24px}
+.modal-tabs{display:flex;gap:4px;background:var(--bg);border-radius:10px;padding:3px;margin-bottom:20px}
+.mtab{flex:1;padding:8px;border-radius:8px;border:none;background:none;color:var(--txt3);font-size:13px;font-weight:600;cursor:pointer;font-family:'Bricolage Grotesque',sans-serif;transition:.15s}
+.mtab.on{background:var(--teal);color:#000}
+.minput{width:100%;padding:11px 14px;background:var(--bg);border:1px solid var(--border);border-radius:9px;color:var(--txt);font-size:13px;font-family:'Bricolage Grotesque',sans-serif;outline:none;transition:.15s;margin-bottom:10px}
+.minput:focus{border-color:var(--teal)}
+.modal-btn{width:100%;padding:13px;background:var(--teal);border:none;border-radius:10px;font-size:14px;font-weight:700;color:#000;cursor:pointer;font-family:'Bricolage Grotesque',sans-serif;transition:.15s;margin-top:4px}
+.modal-btn:hover{background:var(--teal2)}
+.modal-close{position:absolute;top:16px;right:16px;background:rgba(0,201,167,.08);border:1px solid var(--border);color:var(--txt3);width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px}
+.modal{position:relative}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(0,201,167,.12);border:1px solid rgba(0,201,167,.3);color:var(--teal);padding:9px 20px;border-radius:20px;font-size:12px;font-weight:600;z-index:600;opacity:0;transition:.3s;pointer-events:none;white-space:nowrap;backdrop-filter:blur(10px)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px){
+  .nav-links{display:none}
+  .hero-stats{gap:20px}
+  .hstat-num{font-size:22px}
+}
+
+/* ── SUPPORT BOT ── */
+.sbot-fab{position:fixed;bottom:24px;right:24px;width:54px;height:54px;background:linear-gradient(135deg,var(--teal),var(--teal2));border:none;border-radius:50%;color:#000;font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 24px rgba(0,201,167,.4);z-index:300;transition:.2s}
+.sbot-fab:hover{transform:scale(1.08)}
+.sbot-fab:active{transform:scale(.93)}
+.sbot-notif{position:absolute;top:-3px;right:-3px;width:14px;height:14px;background:var(--red);border-radius:50%;border:2px solid var(--bg);animation:sblink 2s infinite}
+@keyframes sblink{0%,100%{transform:scale(1)}50%{transform:scale(1.25)}}
+.sbot-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:400;opacity:0;pointer-events:none;transition:.25s;backdrop-filter:blur(5px)}
+.sbot-overlay.open{opacity:1;pointer-events:all}
+.sbot-win{position:fixed;bottom:0;right:0;width:100%;max-width:390px;height:88vh;background:#0A1A14;border:1px solid var(--border2);border-radius:20px 20px 0 0;z-index:500;display:flex;flex-direction:column;transform:translateY(100%);transition:.3s cubic-bezier(.4,0,.2,1)}
+.sbot-win.open{transform:translateY(0)}
+.sbot-head{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0;background:#0A1A14;border-radius:20px 20px 0 0}
+.sbot-avatar{width:40px;height:40px;background:linear-gradient(135deg,var(--teal),var(--teal2));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.sbot-info{flex:1}
+.sbot-name{font-size:14px;font-weight:700;color:var(--txt)}
+.sbot-status{font-size:10px;color:var(--teal);display:flex;align-items:center;gap:4px;margin-top:1px}
+.sbot-status::before{content:'';width:5px;height:5px;background:var(--teal);border-radius:50%;display:inline-block;animation:sblink 2s infinite}
+.sbot-close{background:rgba(0,201,167,.08);border:1px solid var(--border);color:var(--txt3);width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;flex-shrink:0;transition:.15s}
+.sbot-close:hover{background:rgba(0,201,167,.15)}
+.sbot-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}
+.sbot-msgs::-webkit-scrollbar{width:3px}
+.sbot-msgs::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+.smsg{max-width:84%;display:flex;flex-direction:column;gap:3px}
+.smsg.bot{align-self:flex-start}
+.smsg.user{align-self:flex-end}
+.smsg-bubble{padding:9px 13px;border-radius:13px;font-size:13px;line-height:1.65}
+.smsg.bot .smsg-bubble{background:var(--bg3);border:1px solid var(--border);color:var(--txt);border-bottom-left-radius:4px}
+.smsg.user .smsg-bubble{background:linear-gradient(135deg,var(--teal),var(--teal2));color:#000;font-weight:500;border-bottom-right-radius:4px}
+.smsg-time{font-size:9px;color:var(--txt4);padding:0 4px;font-family:'DM Mono',monospace}
+.smsg.user .smsg-time{text-align:right}
+.sbot-typing{display:flex;gap:4px;align-items:center;padding:9px 13px;background:var(--bg3);border:1px solid var(--border);border-radius:13px;border-bottom-left-radius:4px;align-self:flex-start;width:56px}
+.sbot-typing span{width:6px;height:6px;background:var(--txt4);border-radius:50%;animation:tdot .9s infinite}
+.sbot-typing span:nth-child(2){animation-delay:.15s}
+.sbot-typing span:nth-child(3){animation-delay:.3s}
+.sbot-qr{padding:4px 14px 8px;display:flex;gap:5px;flex-wrap:wrap;flex-shrink:0}
+.sqr{padding:5px 11px;background:var(--bg3);border:1px solid var(--border);border-radius:14px;font-size:11px;color:var(--txt3);cursor:pointer;transition:.15s;font-family:'Bricolage Grotesque',sans-serif;white-space:nowrap}
+.sqr:hover{border-color:var(--teal);color:var(--teal)}
+.sbot-inp-area{padding:10px 14px 20px;border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0;background:#0A1A14}
+.sbot-inp{flex:1;padding:10px 13px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;color:var(--txt);font-size:13px;font-family:'Bricolage Grotesque',sans-serif;outline:none;transition:.15s}
+.sbot-inp:focus{border-color:var(--teal)}
+.sbot-send{width:40px;height:40px;background:var(--teal);border:none;border-radius:10px;color:#000;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.15s}
+.sbot-send:hover{background:var(--teal2)}
+.sbot-send:disabled{opacity:.4;cursor:not-allowed}
+
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo">
+    <div class="nav-logo-icon">🐾</div>
+    Paw<span>Doc</span>
+  </div>
+  <div class="nav-links">
+    <button class="nav-link" onclick="scrollToSection('demo-section')">Demo</button>
+    <button class="nav-link" onclick="scrollToSection('features-section')">Features</button>
+    <button class="nav-link" onclick="scrollToSection('pricing-section')" id="nav-pricing">Pricing</button>
+    <button class="nav-link" onclick="scrollToSection('faq-section')">FAQ</button>
+    <select class="lang-sel" onchange="setLang(this.value)" id="lang-sel">
+      <option value="en">🌐 EN</option>
+      <option value="de">🇩🇪 DE</option>
+      <option value="ar">🇸🇦 AR</option>
+      <option value="tr">🇹🇷 TR</option>
+      <option value="ru">🇷🇺 RU</option>
+      <option value="fr">🇫🇷 FR</option>
+      <option value="es">🇪🇸 ES</option>
+      <option value="zh">🇨🇳 中文</option>
+    </select>
+  </div>
+  <button class="nav-cta" onclick="openModal()" id="nav-cta">Get Started</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-blob"></div>
+  <div class="hero-con">
+    <div class="hero-badge"><span class="hero-badge-dot"></span> <span id="hero-badge-txt">AI-Powered · All Animals · 8 Languages</span></div>
+    <h1 class="hero-title" id="hero-title">Your Pet's Health<span class="sub">Answered Instantly.</span></h1>
+    <p class="hero-desc" id="hero-desc">Describe your pet's symptoms, upload a photo, and get an AI-powered assessment in seconds — available in 8 languages, for every animal.</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="document.getElementById('demo-section').scrollIntoView({behavior:'smooth'})"><i class="ti ti-stethoscope"></i> <span id="hero-btn1">Try for Free</span></button>
+      <button class="btn-secondary" onclick="scrollToSection('pricing-section')" id="hero-btn2">See Pricing</button>
+    </div>
+    <div class="hero-stats">
+      <div class="hstat"><div class="hstat-num">50K+</div><div class="hstat-lbl" id="stat1">Animals Helped</div></div>
+      <div class="hstat"><div class="hstat-num">8</div><div class="hstat-lbl" id="stat2">Languages</div></div>
+      <div class="hstat"><div class="hstat-num">98%</div><div class="hstat-lbl" id="stat3">Accuracy</div></div>
+      <div class="hstat"><div class="hstat-num">24/7</div><div class="hstat-lbl" id="stat4">Available</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- DEMO -->
+<section class="demo-section" id="demo-section">
+  <div class="sec-label" id="demo-label">// LIVE DEMO</div>
+  <h2 class="sec-title" id="demo-title">Ask <span>Anything</span> About Your Pet</h2>
+  <p class="sec-desc" id="demo-desc">No account needed for the demo. Select your animal and describe the symptoms.</p>
+
+  <div class="demo-card">
+    <div class="demo-header">
+      <div class="demo-avatar">🐾</div>
+      <div>
+        <div class="demo-name">PawDoc AI</div>
+        <div class="demo-status" id="demo-status-txt">Online · Ready</div>
+      </div>
+    </div>
+    <div class="animal-row" id="animal-row"></div>
+    <div class="chat-msgs" id="chat-msgs"></div>
+    <div class="quick-replies" id="quick-replies"></div>
+    <div class="disclaimer">
+      <i class="ti ti-alert-triangle"></i>
+      <span id="disclaimer-txt">This is not a medical diagnosis. Always consult a licensed veterinarian for your pet's health.</span>
+    </div>
+    <div class="chat-input-area">
+      <textarea class="chat-inp" id="chat-inp" rows="1" placeholder="Describe symptoms..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg()}"></textarea>
+      <label class="img-btn" for="img-input" title="Upload photo"><i class="ti ti-photo"></i></label>
+      <input type="file" id="img-input" accept="image/*" onchange="handleImg(this)">
+      <button class="send-btn" id="send-btn" onclick="sendMsg()"><i class="ti ti-send"></i></button>
+    </div>
+  </div>
+</section>
+
+<!-- ANIMALS -->
+<section class="animals-section" id="animals-section">
+  <div class="sec-label" id="animals-label">// SUPPORTED ANIMALS</div>
+  <h2 class="sec-title" id="animals-title">Every <span>Animal</span> Welcome</h2>
+  <div class="animals-grid" id="animals-grid"></div>
+</section>
+
+<!-- FEATURES -->
+<section class="features-section" id="features-section">
+  <div class="sec-label" id="features-label">// FEATURES</div>
+  <h2 class="sec-title" id="features-title">Everything Your Pet <span>Needs</span></h2>
+  <p class="sec-desc" id="features-desc">From quick symptom checks to full health history — PawDoc grows with your pet.</p>
+  <div class="features-grid" id="features-grid"></div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-section" id="pricing-section">
+  <div style="text-align:center">
+    <div class="sec-label" style="justify-content:center;display:flex" id="pricing-label">// PRICING</div>
+    <h2 class="sec-title" id="pricing-title">Simple, <span>Transparent</span> Pricing</h2>
+    <p class="sec-desc" style="margin:0 auto 32px" id="pricing-desc">Start free. Upgrade when you need more.</p>
+    <div class="pricing-toggle">
+      <button class="ptog-btn on" id="tog-monthly" onclick="setPricing('monthly')">Monthly</button>
+      <button class="ptog-btn" id="tog-yearly" onclick="setPricing('yearly')">Yearly <span style="color:var(--gold);font-size:10px">-20%</span></button>
+    </div>
+  </div>
+  <div class="pricing-grid" id="pricing-grid"></div>
+  <p style="text-align:center;font-size:11px;color:var(--txt4);margin-top:20px" id="pricing-note">* First month 50% off for all new accounts</p>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section" id="faq-section">
+  <div class="sec-label" id="faq-label">// FAQ</div>
+  <h2 class="sec-title" id="faq-title">Common <span>Questions</span></h2>
+  <div class="faq-list" id="faq-list"></div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-logo">🐾 Paw<span>Doc</span></div>
+  <p class="footer-disc" id="footer-disc">PawDoc provides AI-generated information for educational purposes only. It is not a substitute for professional veterinary advice, diagnosis, or treatment. Always seek the advice of your veterinarian.</p>
+  <div class="footer-links">
+    <span class="footer-link">Privacy Policy</span>
+    <span class="footer-link">Terms of Service</span>
+    <span class="footer-link">Contact</span>
+    <span class="footer-link">Imprint</span>
+  </div>
+</footer>
+
+<!-- AUTH MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-close" onclick="closeModal()"><i class="ti ti-x"></i></div>
+    <div class="modal-title" id="modal-title">Get Started Free</div>
+    <div class="modal-sub" id="modal-sub">No credit card required</div>
+    <div class="modal-tabs">
+      <button class="mtab on" id="tab-signup" onclick="setTab('signup')">Sign Up</button>
+      <button class="mtab" id="tab-login" onclick="setTab('login')">Log In</button>
+    </div>
+    <input class="minput" type="text" id="modal-name" placeholder="Your name" style="display:none">
+    <input class="minput" type="email" id="modal-email" placeholder="Email address">
+    <input class="minput" type="password" id="modal-pass" placeholder="Password">
+    <button class="modal-btn" id="modal-btn" onclick="authAction()">Create Free Account</button>
+  </div>
+</div>
+
+
+<!-- SUPPORT BOT FAB -->
+<button class="sbot-fab" id="sbot-fab" onclick="openSbot()">
+  <span class="sbot-notif"></span>
+  💬
+</button>
+
+<!-- SUPPORT BOT WINDOW -->
+<div class="sbot-overlay" id="sbot-overlay" onclick="closeSbot()"></div>
+<div class="sbot-win" id="sbot-win">
+  <div class="sbot-head">
+    <div class="sbot-avatar">🐾</div>
+    <div class="sbot-info">
+      <div class="sbot-name" id="sbot-name">PawDoc Support</div>
+      <div class="sbot-status" id="sbot-status">Online · AI Support</div>
+    </div>
+    <div class="sbot-close" onclick="closeSbot()"><i class="ti ti-x"></i></div>
+  </div>
+  <div class="sbot-msgs" id="sbot-msgs"></div>
+  <div class="sbot-qr" id="sbot-qr"></div>
+  <div class="sbot-inp-area">
+    <input class="sbot-inp" type="text" id="sbot-inp" placeholder="Ask anything..." onkeydown="if(event.key==='Enter')sbotSend()">
+    <button class="sbot-send" id="sbot-send" onclick="sbotSend()"><i class="ti ti-send"></i></button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════
+const ANIMALS=[
+  {id:'dog',e:'🐶',n:{en:'Dog',de:'Hund',ar:'كلب',tr:'Köpek',ru:'Собака',fr:'Chien',es:'Perro',zh:'狗'}},
+  {id:'cat',e:'🐱',n:{en:'Cat',de:'Katze',ar:'قطة',tr:'Kedi',ru:'Кошка',fr:'Chat',es:'Gato',zh:'猫'}},
+  {id:'rabbit',e:'🐰',n:{en:'Rabbit',de:'Kaninchen',ar:'أرنب',tr:'Tavşan',ru:'Кролик',fr:'Lapin',es:'Conejo',zh:'兔子'}},
+  {id:'bird',e:'🐦',n:{en:'Bird',de:'Vogel',ar:'طائر',tr:'Kuş',ru:'Птица',fr:'Oiseau',es:'Pájaro',zh:'鸟'}},
+  {id:'fish',e:'🐠',n:{en:'Fish',de:'Fisch',ar:'سمكة',tr:'Balık',ru:'Рыба',fr:'Poisson',es:'Pez',zh:'鱼'}},
+  {id:'hamster',e:'🐹',n:{en:'Hamster',de:'Hamster',ar:'هامستر',tr:'Hamster',ru:'Хомяк',fr:'Hamster',es:'Hámster',zh:'仓鼠'}},
+  {id:'turtle',e:'🐢',n:{en:'Turtle',de:'Schildkröte',ar:'سلحفاة',tr:'Kaplumbağa',ru:'Черепаха',fr:'Tortue',es:'Tortuga',zh:'乌龟'}},
+  {id:'snake',e:'🐍',n:{en:'Snake',de:'Schlange',ar:'ثعبان',tr:'Yılan',ru:'Змея',fr:'Serpent',es:'Serpiente',zh:'蛇'}},
+  {id:'horse',e:'🐴',n:{en:'Horse',de:'Pferd',ar:'حصان',tr:'At',ru:'Лошадь',fr:'Cheval',es:'Caballo',zh:'马'}},
+  {id:'cow',e:'🐄',n:{en:'Cow',de:'Kuh',ar:'بقرة',tr:'İnek',ru:'Корова',fr:'Vache',es:'Vaca',zh:'牛'}},
+  {id:'sheep',e:'🐑',n:{en:'Sheep',de:'Schaf',ar:'خروف',tr:'Koyun',ru:'Овца',fr:'Mouton',es:'Oveja',zh:'羊'}},
+  {id:'other',e:'🐾',n:{en:'Other',de:'Sonstiges',ar:'أخرى',tr:'Diğer',ru:'Другое',fr:'Autre',es:'Otro',zh:'其他'}},
+];
+
+const FEATURES_DATA=[
+  {icon:'ti-stethoscope',title:{en:'Symptom Analysis',de:'Symptomanalyse',ar:'تحليل الأعراض',tr:'Semptom Analizi',ru:'Анализ симптомов',fr:'Analyse des symptômes',es:'Análisis de síntomas',zh:'症状分析'},desc:{en:'Describe any symptom and get instant AI-powered assessment with severity rating.',de:'Beschreibe Symptome und erhalte sofort eine KI-gestützte Bewertung.',ar:'صف أي عرض واحصل على تقييم فوري من الذكاء الاصطناعي.',tr:'Herhangi bir semptomu tanımlayın ve anında AI değerlendirmesi alın.',ru:'Опишите симптомы и получите мгновенную оценку от ИИ.',fr:'Décrivez les symptômes et obtenez une évaluation IA instantanée.',es:'Describe síntomas y obtén una evaluación IA instantánea.',zh:'描述症状，即时获得AI评估'},plan:'free'},
+  {icon:'ti-camera',title:{en:'Photo Diagnosis',de:'Foto-Diagnose',ar:'تشخيص بالصورة',tr:'Fotoğraf Tanısı',ru:'Фото-диагностика',fr:'Diagnostic photo',es:'Diagnóstico por foto',zh:'照片诊断'},desc:{en:'Upload a photo of your pet and let AI analyze visible symptoms and conditions.',de:'Lade ein Foto hoch und lass die KI sichtbare Symptome analysieren.',ar:'ارفع صورة حيوانك ودع الذكاء الاصطناعي يحلل الأعراض المرئية.',tr:'Fotoğraf yükleyin ve AI\'ın görsel semptomları analiz etmesini sağlayın.',ru:'Загрузите фото питомца для анализа видимых симптомов.',fr:'Téléchargez une photo et laissez l\'IA analyser les symptômes visibles.',es:'Sube una foto y deja que la IA analice los síntomas visibles.',zh:'上传照片，让AI分析可见症状'},plan:'basic'},
+  {icon:'ti-history',title:{en:'Health History',de:'Gesundheitshistorie',ar:'السجل الصحي',tr:'Sağlık Geçmişi',ru:'История здоровья',fr:'Historique de santé',es:'Historial de salud',zh:'健康历史'},desc:{en:'Track every consultation, symptom, and recommendation over time for each pet.',de:'Verfolge alle Beratungen und Empfehlungen für jedes Tier über die Zeit.',ar:'تتبع كل استشارة وعرض وتوصية لكل حيوان.',tr:'Her evcil hayvan için tüm konsültasyonları ve tavsiyeleri takip edin.',ru:'Отслеживайте все консультации для каждого питомца.',fr:'Suivez chaque consultation et recommandation pour chaque animal.',es:'Rastrea cada consulta y recomendación para cada mascota.',zh:'追踪每次咨询和建议'},plan:'basic'},
+  {icon:'ti-file-description',title:{en:'PDF Health Report',de:'PDF Gesundheitsbericht',ar:'تقرير صحي PDF',tr:'PDF Sağlık Raporu',ru:'PDF отчёт о здоровье',fr:'Rapport santé PDF',es:'Informe de salud PDF',zh:'PDF健康报告'},desc:{en:'Generate a monthly health report for your vet appointment — professional and ready to share.',de:'Erstelle einen monatlichen Gesundheitsbericht für den Tierarzt.',ar:'أنشئ تقريراً صحياً شهرياً لموعد البيطري.',tr:'Veteriner randevunuz için aylık sağlık raporu oluşturun.',ru:'Создайте ежемесячный отчёт для ветеринара.',fr:'Générez un rapport mensuel pour votre vétérinaire.',es:'Genera un informe mensual para tu veterinario.',zh:'为兽医预约生成月度健康报告'},plan:'plus'},
+  {icon:'ti-bell',title:{en:'Smart Reminders',de:'Intelligente Erinnerungen',ar:'تذكيرات ذكية',tr:'Akıllı Hatırlatıcılar',ru:'Умные напоминания',fr:'Rappels intelligents',es:'Recordatorios inteligentes',zh:'智能提醒'},desc:{en:'Never miss vaccinations, medications, or checkups with AI-scheduled reminders.',de:'Vergiss nie Impfungen, Medikamente oder Vorsorgeuntersuchungen.',ar:'لا تفوت أبداً اللقاحات أو الأدوية أو الفحوصات.',tr:'Aşıları, ilaçları veya kontrolleri asla kaçırmayın.',ru:'Никогда не пропускайте прививки и визиты к ветеринару.',fr:'Ne manquez jamais les vaccins, médicaments ou bilans.',es:'Nunca olvides vacunas, medicamentos o revisiones.',zh:'永不错过疫苗、药物或检查'},plan:'plus'},
+  {icon:'ti-users',title:{en:'Multi-Pet Dashboard',de:'Multi-Tier-Dashboard',ar:'لوحة متعددة الحيوانات',tr:'Çoklu Hayvan Paneli',ru:'Панель для нескольких питомцев',fr:'Tableau de bord multi-animaux',es:'Panel multi-mascotas',zh:'多宠物仪表板'},desc:{en:'Manage all your pets in one place — individual profiles, histories, and reports.',de:'Verwalte alle Tiere an einem Ort mit individuellen Profilen.',ar:'أدر جميع حيواناتك في مكان واحد بملفات تعريف فردية.',tr:'Tüm evcil hayvanlarınızı tek bir yerden yönetin.',ru:'Управляйте всеми питомцами в одном месте.',fr:'Gérez tous vos animaux au même endroit.',es:'Gestiona todas tus mascotas en un solo lugar.',zh:'在一处管理所有宠物'},plan:'pro'},
+  {icon:'ti-map-pin',title:{en:'Vet Finder',de:'Tierarzt-Finder',ar:'ابحث عن بيطري',tr:'Veteriner Bulucu',ru:'Поиск ветеринара',fr:'Trouver un vétérinaire',es:'Buscador de veterinarios',zh:'寻找兽医'},desc:{en:'Find the nearest verified vet clinic based on your location — available 24/7.',de:'Finde die nächste verifizierte Tierklinik basierend auf deinem Standort.',ar:'ابحث عن أقرب عيادة بيطرية موثقة بناءً على موقعك.',tr:'Konumunuza göre en yakın doğrulanmış veteriner kliniğini bulun.',ru:'Найдите ближайшую ветклинику по вашему местоположению.',fr:'Trouvez la clinique vétérinaire vérifiée la plus proche.',es:'Encuentra la clínica veterinaria verificada más cercana.',zh:'根据您的位置找到最近的经过认证的兽医诊所'},plan:'pro'},
+  {icon:'ti-language',title:{en:'8 Languages',de:'8 Sprachen',ar:'8 لغات',tr:'8 Dil',ru:'8 языков',fr:'8 Langues',es:'8 Idiomas',zh:'8种语言'},desc:{en:'Full support for EN, DE, AR, TR, RU, FR, ES, ZH — including RTL for Arabic.',de:'Volle Unterstützung für alle 8 Sprachen inkl. RTL für Arabisch.',ar:'دعم كامل لـ 8 لغات بما فيها العربية بالكتابة من اليمين لليسار.',tr:'Arapça için RTL dahil 8 dil için tam destek.',ru:'Полная поддержка 8 языков, включая RTL для арабского.',fr:'Support complet pour 8 langues dont RTL pour l\'arabe.',es:'Soporte completo para 8 idiomas incluido RTL para árabe.',zh:'完整支持8种语言，包括阿拉伯语RTL'},plan:'free'},
+];
+
+const PLANS=[
+  {id:'free',name:{en:'Free',de:'Kostenlos',ar:'مجاني',tr:'Ücretsiz',ru:'Бесплатно',fr:'Gratuit',es:'Gratis',zh:'免费'},
+   monthly:0,yearly:0,first:null,popular:false,
+   features:{en:['3 questions per day','Basic symptom analysis','All animal types','8 languages','— No photo upload','— No health history','— No reminders'],
+   de:['3 Fragen pro Tag','Basis Symptomanalyse','Alle Tierarten','8 Sprachen','— Kein Foto-Upload','— Keine Krankengeschichte','— Keine Erinnerungen'],
+   ar:['3 أسئلة يومياً','تحليل أعراض أساسي','جميع أنواع الحيوانات','8 لغات','— بدون رفع صور','— بدون سجل صحي','— بدون تذكيرات'],
+   tr:['Günde 3 soru','Temel semptom analizi','Tüm hayvan türleri','8 dil','— Fotoğraf yok','— Geçmiş yok','— Hatırlatıcı yok'],
+   ru:['3 вопроса в день','Базовый анализ','Все животные','8 языков','— Без фото','— Без истории','— Без напоминаний'],
+   fr:['3 questions/jour','Analyse de base','Tous les animaux','8 langues','— Pas de photo','— Pas d\'historique','— Pas de rappels'],
+   es:['3 preguntas/día','Análisis básico','Todos los animales','8 idiomas','— Sin fotos','— Sin historial','— Sin recordatorios'],
+   zh:['每天3个问题','基础症状分析','所有动物类型','8种语言','— 无图片上传','— 无健康历史','— 无提醒']}},
+  {id:'basic',name:{en:'Basic',de:'Basic',ar:'أساسي',tr:'Temel',ru:'Базовый',fr:'Basique',es:'Básico',zh:'基础'},
+   monthly:20,yearly:16,first:10,popular:false,
+   features:{en:['Unlimited questions','Symptom + photo analysis','Health history (1 pet)','8 languages','Monthly PDF report','— No reminders','— No multi-pet'],
+   de:['Unbegrenzte Fragen','Symptom + Fotoanalyse','Krankengeschichte (1 Tier)','8 Sprachen','Monatlicher PDF-Bericht','— Keine Erinnerungen','— Kein Multi-Tier'],
+   ar:['أسئلة غير محدودة','تحليل أعراض + صور','سجل صحي (حيوان واحد)','8 لغات','تقرير PDF شهري','— بدون تذكيرات','— بدون متعدد الحيوانات'],
+   tr:['Sınırsız soru','Semptom + fotoğraf analizi','Sağlık geçmişi (1 hayvan)','8 dil','Aylık PDF raporu','— Hatırlatıcı yok','— Çoklu hayvan yok'],
+   ru:['Безлимитные вопросы','Анализ + фото','История здоровья (1 питомец)','8 языков','Ежемесячный PDF','— Без напоминаний','— Без мультипитомцев'],
+   fr:['Questions illimitées','Symptômes + photo','Historique (1 animal)','8 langues','Rapport PDF mensuel','— Pas de rappels','— Pas multi-animal'],
+   es:['Preguntas ilimitadas','Síntomas + foto','Historial (1 mascota)','8 idiomas','Informe PDF mensual','— Sin recordatorios','— Sin multi-mascota'],
+   zh:['无限问题','症状+照片分析','健康历史(1只宠物)','8种语言','月度PDF报告','— 无提醒','— 无多宠物']}},
+  {id:'plus',name:{en:'Plus',de:'Plus',ar:'بلاس',tr:'Plus',ru:'Плюс',fr:'Plus',es:'Plus',zh:'增强'},
+   monthly:45,yearly:36,first:22,popular:true,
+   features:{en:['Everything in Basic','Up to 5 pets','Smart reminders','Priority AI responses','Vet finder nearby','Monthly health analysis','— No clinic dashboard'],
+   de:['Alles in Basic','Bis zu 5 Tiere','Intelligente Erinnerungen','Priorisierte KI-Antworten','Tierarzt-Finder','Monatliche Gesundheitsanalyse','— Kein Klinik-Dashboard'],
+   ar:['كل مزايا الأساسي','حتى 5 حيوانات','تذكيرات ذكية','ردود AI ذات أولوية','بحث عن بيطري','تحليل صحي شهري','— بدون لوحة عيادة'],
+   tr:['Basic\'deki her şey','5 hayvana kadar','Akıllı hatırlatıcılar','Öncelikli AI yanıtları','Veteriner bulucu','Aylık sağlık analizi','— Klinik paneli yok'],
+   ru:['Всё из Basic','До 5 питомцев','Умные напоминания','Приоритетные ответы ИИ','Поиск ветеринара','Ежемесячный анализ','— Без панели клиники'],
+   fr:['Tout de Basic','Jusqu\'à 5 animaux','Rappels intelligents','Réponses IA prioritaires','Trouver un vétérinaire','Analyse mensuelle','— Pas de tableau clinique'],
+   es:['Todo de Basic','Hasta 5 mascotas','Recordatorios inteligentes','Respuestas IA prioritarias','Buscador de veterinarios','Análisis mensual','— Sin panel de clínica'],
+   zh:['包含Basic所有功能','最多5只宠物','智能提醒','优先AI响应','附近兽医查找','月度健康分析','— 无诊所仪表板']}},
+  {id:'pro',name:{en:'Pro',de:'Pro',ar:'برو',tr:'Pro',ru:'Про',fr:'Pro',es:'Pro',zh:'专业'},
+   monthly:99,yearly:79,first:49,popular:false,
+   features:{en:['Everything in Plus','Unlimited pets','Clinic / breeder dashboard','API access','White-label reports','Dedicated support','Custom integrations'],
+   de:['Alles in Plus','Unbegrenzte Tiere','Klinik/Züchter-Dashboard','API-Zugang','White-Label-Berichte','Dedizierter Support','Custom Integrationen'],
+   ar:['كل مزايا بلاس','حيوانات غير محدودة','لوحة عيادة/مربي','وصول API','تقارير بعلامتك','دعم مخصص','تكاملات مخصصة'],
+   tr:['Plus\'taki her şey','Sınırsız hayvan','Klinik/yetiştirici paneli','API erişimi','Beyaz etiketli raporlar','Özel destek','Özel entegrasyonlar'],
+   ru:['Всё из Plus','Неограниченно питомцев','Панель клиники/заводчика','Доступ к API','White-label отчёты','Приоритетная поддержка','Кастомные интеграции'],
+   fr:['Tout de Plus','Animaux illimités','Tableau clinique/éleveur','Accès API','Rapports en marque blanche','Support dédié','Intégrations personnalisées'],
+   es:['Todo de Plus','Mascotas ilimitadas','Panel clínica/criador','Acceso API','Informes white-label','Soporte dedicado','Integraciones personalizadas'],
+   zh:['包含Plus所有功能','无限宠物','诊所/养殖者仪表板','API访问','白标报告','专属支持','自定义集成']}},
+];
+
+const FAQS=[
+  {q:{en:'Is PawDoc a replacement for a vet?',de:'Ersetzt PawDoc einen Tierarzt?',ar:'هل PawDoc يحل محل البيطري؟',tr:'PawDoc bir veterinerin yerini tutar mı?',ru:'Заменяет ли PawDoc ветеринара?',fr:'PawDoc remplace-t-il un vétérinaire?',es:'¿PawDoc reemplaza a un veterinario?',zh:'PawDoc能替代兽医吗？'},
+   a:{en:'No. PawDoc is an AI assistant for educational purposes. It helps you understand symptoms and decide if a vet visit is needed — but it never replaces professional veterinary care.',de:'Nein. PawDoc ist ein KI-Assistent zu Bildungszwecken. Er hilft dir, Symptome zu verstehen, ersetzt aber nie einen Tierarzt.',ar:'لا. PawDoc هو مساعد ذكاء اصطناعي للأغراض التعليمية. يساعدك على فهم الأعراض وتحديد ما إذا كنت بحاجة لزيارة البيطري.',tr:'Hayır. PawDoc eğitim amaçlı bir AI asistanıdır. Semptomları anlamanıza yardımcı olur ancak profesyonel bakımın yerini alamaz.',ru:'Нет. PawDoc — это ИИ-ассистент в образовательных целях. Он помогает понять симптомы, но не заменяет ветеринара.',fr:'Non. PawDoc est un assistant IA à des fins éducatives. Il aide à comprendre les symptômes mais ne remplace jamais un vétérinaire.',es:'No. PawDoc es un asistente IA con fines educativos. Ayuda a entender síntomas pero nunca reemplaza la atención veterinaria profesional.',zh:'不。PawDoc是用于教育目的的AI助手。它帮助您了解症状，但永远不能替代专业兽医护理。'}},
+  {q:{en:'Which animals does PawDoc support?',de:'Welche Tiere unterstützt PawDoc?',ar:'ما الحيوانات التي يدعمها PawDoc؟',tr:'PawDoc hangi hayvanları destekliyor?',ru:'Каких животных поддерживает PawDoc?',fr:'Quels animaux PawDoc supporte-t-il?',es:'¿Qué animales soporta PawDoc?',zh:'PawDoc支持哪些动物？'},
+   a:{en:'PawDoc supports all animals — dogs, cats, rabbits, birds, fish, reptiles, horses, farm animals, and more. If it\'s an animal, we cover it.',de:'PawDoc unterstützt alle Tiere — Hunde, Katzen, Kaninchen, Vögel, Fische, Reptilien, Pferde, Nutztiere und mehr.',ar:'يدعم PawDoc جميع الحيوانات — الكلاب والقطط والأرانب والطيور والأسماك والزواحف والخيول وحيوانات المزرعة والمزيد.',tr:'PawDoc tüm hayvanları destekler — köpekler, kediler, tavşanlar, kuşlar, balıklar, sürüngenler, atlar, çiftlik hayvanları ve daha fazlası.',ru:'PawDoc поддерживает всех животных — собак, кошек, кроликов, птиц, рыб, рептилий, лошадей, сельскохозяйственных животных и других.',fr:'PawDoc supporte tous les animaux — chiens, chats, lapins, oiseaux, poissons, reptiles, chevaux, animaux de ferme et plus.',es:'PawDoc soporta todos los animales — perros, gatos, conejos, aves, peces, reptiles, caballos, animales de granja y más.',zh:'PawDoc支持所有动物——狗、猫、兔子、鸟、鱼、爬行动物、马、农场动物等。'}},
+  {q:{en:'Can I cancel my subscription anytime?',de:'Kann ich mein Abonnement jederzeit kündigen?',ar:'هل يمكنني إلغاء اشتراكي في أي وقت؟',tr:'Aboneliğimi istediğim zaman iptal edebilir miyim?',ru:'Могу ли я отменить подписку в любое время?',fr:'Puis-je annuler mon abonnement à tout moment?',es:'¿Puedo cancelar mi suscripción en cualquier momento?',zh:'我可以随时取消订阅吗？'},
+   a:{en:'Yes, cancel anytime. No contracts, no cancellation fees. Your account stays active until the end of the billing period.',de:'Ja, jederzeit kündigen. Keine Verträge, keine Stornogebühren. Dein Konto bleibt bis zum Ende des Abrechnungszeitraums aktiv.',ar:'نعم، يمكنك الإلغاء في أي وقت. لا عقود ولا رسوم إلغاء. يبقى حسابك نشطاً حتى نهاية فترة الفاتورة.',tr:'Evet, istediğiniz zaman iptal edin. Sözleşme yok, iptal ücreti yok. Hesabınız fatura döneminin sonuna kadar aktif kalır.',ru:'Да, отменяйте в любое время. Никаких контрактов и штрафов. Аккаунт остаётся активным до конца расчётного периода.',fr:'Oui, annulez à tout moment. Pas de contrats, pas de frais. Votre compte reste actif jusqu\'à la fin de la période de facturation.',es:'Sí, cancela cuando quieras. Sin contratos, sin cargos. Tu cuenta permanece activa hasta el final del período de facturación.',zh:'是的，随时取消。无合同，无取消费用。您的账户在结算周期结束前保持有效。'}},
+  {q:{en:'How accurate is the AI?',de:'Wie genau ist die KI?',ar:'ما مدى دقة الذكاء الاصطناعي؟',tr:'AI ne kadar doğru?',ru:'Насколько точен ИИ?',fr:'Quelle est la précision de l\'IA?',es:'¿Qué tan precisa es la IA?',zh:'AI有多准确？'},
+   a:{en:'PawDoc achieves ~98% accuracy on common conditions based on internal testing. However, AI assessments are not diagnoses. Always confirm serious symptoms with a vet.',de:'PawDoc erreicht ~98% Genauigkeit bei häufigen Erkrankungen. KI-Bewertungen sind jedoch keine Diagnosen. Bestätige ernste Symptome immer beim Tierarzt.',ar:'يحقق PawDoc دقة ~98% في الحالات الشائعة. ومع ذلك، تقييمات الذكاء الاصطناعي ليست تشخيصات. تأكد دائماً من الأعراض الخطيرة مع البيطري.',tr:'PawDoc yaygın durumlarda ~%98 doğruluk elde eder. Ancak AI değerlendirmeleri tanı değildir. Ciddi semptomları her zaman veterinerle doğrulayın.',ru:'PawDoc достигает ~98% точности при распространённых состояниях. Но оценки ИИ — не диагнозы. Всегда подтверждайте серьёзные симптомы у ветеринара.',fr:'PawDoc atteint ~98% de précision sur les conditions courantes. Mais les évaluations IA ne sont pas des diagnostics. Confirmez toujours les symptômes graves avec un vétérinaire.',es:'PawDoc logra ~98% de precisión en condiciones comunes. Sin embargo, las evaluaciones IA no son diagnósticos. Siempre confirma síntomas graves con un veterinario.',zh:'PawDoc在常见情况下达到约98%的准确率。但AI评估不是诊断。请始终与兽医确认严重症状。'}},
+];
+
+const T={
+  en:{welcome:"Hello! I'm PawDoc AI 🐾 Select your animal and describe what's wrong. I'll assess the symptoms and tell you if a vet visit is needed.",qr:["Not eating","Vomiting","Lethargy","Skin issue","Eye problem","Limping"],chat_ph:"Describe symptoms...",disclaimer:"This is not a medical diagnosis. Always consult a licensed veterinarian.",tog_m:"Monthly",tog_y:"Yearly",pricing_note:"* First month 50% off for all new accounts",get_started:"Get Started",try_free:"Try for Free",see_pricing:"See Pricing"},
+  de:{welcome:"Hallo! Ich bin PawDoc AI 🐾 Wähle dein Tier und beschreibe das Problem. Ich bewerte die Symptome.",qr:["Frisst nicht","Erbrechen","Lethargie","Hautproblem","Augenproblem","Hinken"],chat_ph:"Symptome beschreiben...",disclaimer:"Dies ist keine medizinische Diagnose. Konsultiere immer einen Tierarzt.",tog_m:"Monatlich",tog_y:"Jährlich",pricing_note:"* Erster Monat 50% Rabatt für alle neuen Konten",get_started:"Starten",try_free:"Kostenlos testen",see_pricing:"Preise"},
+  ar:{welcome:"مرحباً! أنا PawDoc AI 🐾 اختر حيوانك وصف المشكلة. سأقيّم الأعراض وأخبرك إذا كنت بحاجة لبيطري.",qr:["لا يأكل","قيء","خمول","مشكلة جلدية","مشكلة في العين","عرج"],chat_ph:"صف الأعراض...",disclaimer:"هذا ليس تشخيصاً طبياً. استشر دائماً بيطرياً مرخصاً.",tog_m:"شهري",tog_y:"سنوي",pricing_note:"* أول شهر بخصم 50% لجميع الحسابات الجديدة",get_started:"ابدأ الآن",try_free:"جرب مجاناً",see_pricing:"الأسعار"},
+  tr:{welcome:"Merhaba! Ben PawDoc AI 🐾 Hayvanınızı seçin ve sorunu açıklayın. Semptomları değerlendireceğim.",qr:["Yemiyor","Kusma","Uyuşukluk","Deri sorunu","Göz sorunu","Aksama"],chat_ph:"Semptomları açıklayın...",disclaimer:"Bu tıbbi bir tanı değildir. Her zaman lisanslı bir veterinere danışın.",tog_m:"Aylık",tog_y:"Yıllık",pricing_note:"* Tüm yeni hesaplara ilk ay %50 indirim",get_started:"Başla",try_free:"Ücretsiz Dene",see_pricing:"Fiyatlar"},
+  ru:{welcome:"Привет! Я PawDoc AI 🐾 Выберите животное и опишите проблему. Я оценю симптомы.",qr:["Не ест","Рвота","Вялость","Проблема с кожей","Проблема с глазами","Хромота"],chat_ph:"Опишите симптомы...",disclaimer:"Это не медицинский диагноз. Всегда консультируйтесь с ветеринаром.",tog_m:"Месяц",tog_y:"Год",pricing_note:"* Первый месяц со скидкой 50% для новых аккаунтов",get_started:"Начать",try_free:"Попробовать бесплатно",see_pricing:"Цены"},
+  fr:{welcome:"Bonjour! Je suis PawDoc AI 🐾 Sélectionnez votre animal et décrivez le problème. J'évaluerai les symptômes.",qr:["Ne mange pas","Vomissements","Léthargie","Problème de peau","Problème oculaire","Boiterie"],chat_ph:"Décrivez les symptômes...",disclaimer:"Ce n'est pas un diagnostic médical. Consultez toujours un vétérinaire agréé.",tog_m:"Mensuel",tog_y:"Annuel",pricing_note:"* Premier mois à -50% pour tous les nouveaux comptes",get_started:"Commencer",try_free:"Essai gratuit",see_pricing:"Tarifs"},
+  es:{welcome:"¡Hola! Soy PawDoc AI 🐾 Selecciona tu animal y describe el problema. Evaluaré los síntomas.",qr:["No come","Vómitos","Letargo","Problema de piel","Problema ocular","Cojera"],chat_ph:"Describe los síntomas...",disclaimer:"Esto no es un diagnóstico médico. Siempre consulta a un veterinario autorizado.",tog_m:"Mensual",tog_y:"Anual",pricing_note:"* Primer mes al 50% de descuento para nuevas cuentas",get_started:"Empezar",try_free:"Prueba gratis",see_pricing:"Precios"},
+  zh:{welcome:"你好！我是 PawDoc AI 🐾 选择您的动物并描述问题。我将评估症状。",qr:["不吃东西","呕吐","嗜睡","皮肤问题","眼部问题","跛行"],chat_ph:"描述症状...",disclaimer:"这不是医疗诊断。请始终咨询执照兽医。",tog_m:"月付",tog_y:"年付",pricing_note:"* 所有新账户首月5折优惠",get_started:"开始",try_free:"免费试用",see_pricing:"查看价格"},
+};
+
+// ══════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════
+let lang='en', selAnimal='dog', pricingMode='monthly', aiTyping=false;
+let pendingImg=null;
+
+// ══════════════════════════════════════════════
+// LANG
+// ══════════════════════════════════════════════
+function setLang(l){
+  lang=l;
+  if(sbotOpen)updateSbotLang();
+  document.documentElement.dir=l==='ar'?'rtl':'ltr';
+  document.getElementById('lang-sel').value=l;
+  applyLang();
+  renderAnimalRow();
+  renderFeatures();
+  renderAnimalsGrid();
+  renderPricing();
+  renderFAQ();
+}
+function applyLang(){
+  const t=T[lang];
+  document.getElementById('chat-inp').placeholder=t.chat_ph;
+  document.getElementById('disclaimer-txt').textContent=t.disclaimer;
+  document.getElementById('tog-monthly').textContent=t.tog_m;
+  document.getElementById('tog-yearly').innerHTML=t.tog_y+' <span style="color:var(--gold);font-size:10px">-20%</span>';
+  document.getElementById('pricing-note').textContent=t.pricing_note;
+  document.getElementById('nav-cta').textContent=t.get_started;
+  document.getElementById('hero-btn1').textContent=t.try_free;
+  document.getElementById('hero-btn2').textContent=t.see_pricing;
+  renderQR();
+}
+
+// ══════════════════════════════════════════════
+// ANIMAL ROW
+// ══════════════════════════════════════════════
+function renderAnimalRow(){
+  const g=document.getElementById('animal-row');g.innerHTML='';
+  ANIMALS.forEach(a=>{
+    const b=document.createElement('button');b.className='animal-btn'+(selAnimal===a.id?' on':'');
+    b.innerHTML=a.e+' '+(a.n[lang]||a.n.en);
+    b.onclick=()=>{selAnimal=a.id;renderAnimalRow();};
+    g.appendChild(b);
+  });
+}
+function renderAnimalsGrid(){
+  const g=document.getElementById('animals-grid');g.innerHTML='';
+  ANIMALS.forEach(a=>{
+    const d=document.createElement('div');d.className='animal-card';
+    d.innerHTML=`<span class="animal-emoji">${a.e}</span><span class="animal-name">${a.n[lang]||a.n.en}</span>`;
+    d.onclick=()=>{
+      selAnimal=a.id;renderAnimalRow();
+      document.getElementById('demo-section').scrollIntoView({behavior:'smooth'});
+    };
+    g.appendChild(d);
+  });
+}
+
+// ══════════════════════════════════════════════
+// CHAT
+// ══════════════════════════════════════════════
+function initChat(){
+  const msgs=document.getElementById('chat-msgs');msgs.innerHTML='';
+  appendMsg('bot',T[lang].welcome);
+  renderQR();
+}
+function renderQR(){
+  const c=document.getElementById('quick-replies');c.innerHTML='';
+  (T[lang].qr||[]).forEach(q=>{
+    const b=document.createElement('button');b.className='qr';b.textContent=q;
+    b.onclick=()=>sendText(q);
+    c.appendChild(b);
+  });
+}
+function fmtTime(){const n=new Date();return n.getHours().toString().padStart(2,'0')+':'+n.getMinutes().toString().padStart(2,'0')}
+function appendMsg(role,html){
+  const msgs=document.getElementById('chat-msgs');
+  const d=document.createElement('div');d.className='msg '+role;
+  d.innerHTML=`<div class="msg-bubble">${html}</div><div class="msg-time">${fmtTime()}</div>`;
+  msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;
+}
+function showTyping(){
+  const msgs=document.getElementById('chat-msgs');
+  const d=document.createElement('div');d.className='typing';d.id='typing-ind';
+  d.innerHTML='<span></span><span></span><span></span>';
+  msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;
+}
+function hideTyping(){const t=document.getElementById('typing-ind');if(t)t.remove();}
+
+function handleImg(inp){
+  const file=inp.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{pendingImg=e.target.result;showToast('📷 Photo ready — send your question');};
+  reader.readAsDataURL(file);
+  inp.value='';
+}
+
+async function sendMsg(){sendText(document.getElementById('chat-inp').value);}
+async function sendText(txt){
+  txt=txt.trim();if((!txt&&!pendingImg)||aiTyping)return;
+  document.getElementById('chat-inp').value='';
+  document.getElementById('quick-replies').innerHTML='';
+  const animal=ANIMALS.find(a=>a.id===selAnimal);
+  const animalName=animal?animal.n[lang]||animal.n.en:'pet';
+
+  // build user bubble
+  let userHtml=txt||'';
+  if(pendingImg)userHtml=`<img src="${pendingImg}" style="width:100%;max-height:140px;object-fit:cover;border-radius:8px;margin-bottom:6px;display:block">${userHtml}`;
+  appendMsg('user',userHtml||'📷');
+
+  aiTyping=true;
+  document.getElementById('send-btn').disabled=true;
+  showTyping();
+
+  const systemPrompt=`You are PawDoc, a friendly AI veterinary assistant. The user has a ${animalName}.
+Analyze symptoms and provide:
+1. Brief assessment (2-3 sentences)
+2. Severity: LOW / MEDIUM / HIGH with colored badge HTML
+3. 2-3 practical tips
+4. Whether vet visit is needed
+
+Format severity as: <span class="severity sev-low">🟢 LOW — Monitor at home</span> or sev-mid or sev-high.
+
+Always end with a disclaimer reminder in 1 short sentence.
+Respond in language: ${lang}. Be concise, warm, and helpful.`;
+
+  try{
+    const messages=[{role:'user',content:txt||(pendingImg?'Please analyze this photo of my pet':'Help me with my pet')}];
+    if(pendingImg){
+      messages[0]={role:'user',content:[
+        {type:'image',source:{type:'base64',media_type:'image/jpeg',data:pendingImg.split(',')[1]}},
+        {type:'text',text:txt||'What do you see? Is there anything concerning?'}
+      ]};
+    }
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:systemPrompt,messages})
+    });
+    const data=await res.json();
+    hideTyping();
+    const reply=(data.content&&data.content[0]&&data.content[0].text)||'Sorry, I could not process that.';
+    appendMsg('bot',reply);
+  }catch(e){
+    hideTyping();
+    appendMsg('bot','⚠ Connection error. Please try again.');
+  }
+  pendingImg=null;
+  aiTyping=false;
+  document.getElementById('send-btn').disabled=false;
+  renderQR();
+}
+
+// ══════════════════════════════════════════════
+// FEATURES
+// ══════════════════════════════════════════════
+function renderFeatures(){
+  const g=document.getElementById('features-grid');g.innerHTML='';
+  FEATURES_DATA.forEach(f=>{
+    const d=document.createElement('div');d.className='feat';
+    const planColors={free:'fb-free',basic:'fb-basic',plus:'fb-plus',pro:'fb-pro'};
+    const planLabels={free:'Free',basic:'Basic',plus:'Plus',pro:'Pro'};
+    d.innerHTML=`<div class="feat-icon"><i class="ti ${f.icon}"></i></div><div class="feat-title">${f.title[lang]||f.title.en}</div><div class="feat-desc">${f.desc[lang]||f.desc.en}</div><span class="feat-badge ${planColors[f.plan]}">${planLabels[f.plan]}</span>`;
+    g.appendChild(d);
+  });
+}
+
+// ══════════════════════════════════════════════
+// PRICING
+// ══════════════════════════════════════════════
+function setPricing(mode){
+  pricingMode=mode;
+  document.getElementById('tog-monthly').classList.toggle('on',mode==='monthly');
+  document.getElementById('tog-yearly').classList.toggle('on',mode==='yearly');
+  renderPricing();
+}
+function renderPricing(){
+  const g=document.getElementById('pricing-grid');g.innerHTML='';
+  PLANS.forEach(p=>{
+    const d=document.createElement('div');
+    d.className='plan plan-'+p.id+(p.popular?' popular':'');
+    const price=pricingMode==='monthly'?p.monthly:p.yearly;
+    const priceStr=price===0?'0':price;
+    const firstStr=p.first?(pricingMode==='monthly'?p.first:Math.round(p.yearly*0.5)):'';
+    const feats=(p.features[lang]||p.features.en).map(f=>{
+      const no=f.startsWith('—');
+      return `<div class="pf${no?' no':''}"><i class="ti ${no?'ti-x':'ti-check'}"></i>${no?f.slice(2):f}</div>`;
+    }).join('');
+    const btnLabels={en:['Get Free','Start Basic','Start Plus','Start Pro'],de:['Kostenlos','Basic starten','Plus starten','Pro starten'],ar:['مجاني','ابدأ أساسي','ابدأ بلاس','ابدأ برو'],tr:['Ücretsiz','Basic Başla','Plus Başla','Pro Başla'],ru:['Бесплатно','Начать Basic','Начать Plus','Начать Pro'],fr:['Gratuit','Commencer Basic','Commencer Plus','Commencer Pro'],es:['Gratis','Iniciar Basic','Iniciar Plus','Iniciar Pro'],zh:['免费','开始Basic','开始Plus','开始Pro']};
+    const btnIdx={free:0,basic:1,plus:2,pro:3}[p.id];
+    const btnLbl=(btnLabels[lang]||btnLabels.en)[btnIdx];
+    d.innerHTML=`${p.popular?`<div class="plan-pop-badge">⭐ MOST POPULAR</div>`:''}
+      <div class="plan-name">${p.name[lang]||p.name.en}</div>
+      <div class="plan-price">${price===0?'Free':'€'+priceStr}</div>
+      ${price>0?`<div class="plan-period">${pricingMode==='monthly'?'/ month':'/ month, billed yearly'}</div>`:''}
+      ${firstStr?`<div class="plan-first">🎉 First month: €${firstStr}</div>`:'<div style="height:20px"></div>'}
+      <div class="plan-sep"></div>
+      <div class="plan-features">${feats}</div>
+      <button class="plan-btn" onclick="openModal()">${btnLbl}</button>`;
+    g.appendChild(d);
+  });
+}
+
+// ══════════════════════════════════════════════
+// FAQ
+// ══════════════════════════════════════════════
+function renderFAQ(){
+  const g=document.getElementById('faq-list');g.innerHTML='';
+  FAQS.forEach((f,i)=>{
+    const d=document.createElement('div');d.className='faq-item';
+    d.innerHTML=`<div class="faq-q" onclick="toggleFAQ(${i})"><span>${f.q[lang]||f.q.en}</span><i class="ti ti-plus"></i></div><div class="faq-a">${f.a[lang]||f.a.en}</div>`;
+    g.appendChild(d);
+  });
+}
+function toggleFAQ(i){
+  const items=document.querySelectorAll('.faq-item');
+  items[i].classList.toggle('open');
+}
+
+// ══════════════════════════════════════════════
+// MODAL
+// ══════════════════════════════════════════════
+let authTab='signup';
+function openModal(){
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function closeModal(){
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+function setTab(tab){
+  authTab=tab;
+  document.getElementById('tab-signup').classList.toggle('on',tab==='signup');
+  document.getElementById('tab-login').classList.toggle('on',tab==='login');
+  document.getElementById('modal-name').style.display=tab==='signup'?'block':'none';
+  document.getElementById('modal-btn').textContent=tab==='signup'?'Create Free Account':'Log In';
+}
+function authAction(){
+  const email=document.getElementById('modal-email').value.trim();
+  if(!email){showToast('⚠ Enter your email');return;}
+  closeModal();
+  showToast(authTab==='signup'?'✓ Account created! Welcome to PawDoc 🐾':'✓ Welcome back!');
+}
+
+// ══════════════════════════════════════════════
+// SCROLL NAV
+// ══════════════════════════════════════════════
+function scrollToSection(id){document.getElementById(id).scrollIntoView({behavior:'smooth'});}
+
+// ══════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+
+// ══════════════════════════════════════════════
+// SUPPORT BOT
+// ══════════════════════════════════════════════
+const SBOT_T = {
+  en:{name:'PawDoc Support',status:'Online · AI Support',welcome:'Hi! 👋 I\'m the PawDoc support assistant. I can help with pricing, features, subscriptions, or any questions about PawDoc.',ph:'Ask anything...',qr:['Pricing plans?','Free vs Basic?','Cancel subscription?','What animals?','How accurate is AI?','First month discount?']},
+  de:{name:'PawDoc Support',status:'Online · KI-Support',welcome:'Hallo! 👋 Ich bin der PawDoc Support-Assistent. Ich helfe bei Preisen, Funktionen oder allgemeinen Fragen zu PawDoc.',ph:'Frage stellen...',qr:['Preispläne?','Kostenlos vs. Basic?','Abo kündigen?','Welche Tiere?','Wie genau ist die KI?','Erster Monatsrabatt?']},
+  ar:{name:'دعم PawDoc',status:'متصل · دعم AI',welcome:'مرحباً! 👋 أنا مساعد دعم PawDoc. يمكنني مساعدتك في الأسعار والمميزات والاشتراكات أو أي سؤال.',ph:'اسأل أي شيء...',qr:['خطط الأسعار؟','الفرق بين المجاني والأساسي؟','إلغاء الاشتراك؟','ما الحيوانات المدعومة؟','دقة الذكاء الاصطناعي؟','خصم الشهر الأول؟']},
+  tr:{name:'PawDoc Destek',status:'Çevrimiçi · AI Destek',welcome:'Merhaba! 👋 PawDoc destek asistanıyım. Fiyatlandırma, özellikler veya abonelik hakkında yardımcı olabilirim.',ph:'Soru sorun...',qr:['Fiyat planları?','Ücretsiz vs Temel?','Abonelik iptali?','Hangi hayvanlar?','AI doğruluğu?','İlk ay indirimi?']},
+  ru:{name:'Поддержка PawDoc',status:'Онлайн · ИИ Поддержка',welcome:'Привет! 👋 Я ассистент поддержки PawDoc. Помогу с ценами, функциями или любыми вопросами.',ph:'Задать вопрос...',qr:['Тарифные планы?','Бесплатно vs Basic?','Отмена подписки?','Какие животные?','Точность ИИ?','Скидка первого месяца?']},
+  fr:{name:'Support PawDoc',status:'En ligne · Support IA',welcome:'Bonjour! 👋 Je suis l\'assistant support PawDoc. Je peux vous aider avec les tarifs, fonctionnalités ou abonnements.',ph:'Posez une question...',qr:['Plans tarifaires?','Gratuit vs Basic?','Annuler l\'abonnement?','Quels animaux?','Précision de l\'IA?','Réduction premier mois?']},
+  es:{name:'Soporte PawDoc',status:'En línea · Soporte IA',welcome:'¡Hola! 👋 Soy el asistente de soporte PawDoc. Puedo ayudarte con precios, funciones o suscripciones.',ph:'Haz una pregunta...',qr:['Planes de precios?','Gratis vs Basic?','Cancelar suscripción?','Qué animales?','Precisión de la IA?','Descuento primer mes?']},
+  zh:{name:'PawDoc 支持',status:'在线 · AI支持',welcome:'你好！👋 我是 PawDoc 支持助手。我可以帮助解答关于定价、功能或订阅的问题。',ph:'请提问...',qr:['定价方案？','免费vs基础？','取消订阅？','支持哪些动物？','AI准确性？','首月折扣？']},
+};
+
+let sbotOpen=false, sbotTyping=false, sbotInited=false;
+
+function openSbot(){
+  sbotOpen=true;
+  document.getElementById('sbot-overlay').classList.add('open');
+  document.getElementById('sbot-win').classList.add('open');
+  document.getElementById('sbot-fab').style.display='none';
+  if(!sbotInited){initSbot();sbotInited=true;}
+  updateSbotLang();
+}
+function closeSbot(){
+  sbotOpen=false;
+  document.getElementById('sbot-overlay').classList.remove('open');
+  document.getElementById('sbot-win').classList.remove('open');
+  document.getElementById('sbot-fab').style.display='flex';
+}
+function updateSbotLang(){
+  const t=SBOT_T[lang]||SBOT_T.en;
+  document.getElementById('sbot-name').textContent=t.name;
+  document.getElementById('sbot-status').textContent=t.status;
+  document.getElementById('sbot-inp').placeholder=t.ph;
+  renderSbotQR();
+}
+function initSbot(){
+  const t=SBOT_T[lang]||SBOT_T.en;
+  sbotAppend('bot',t.welcome);
+  renderSbotQR();
+}
+function renderSbotQR(){
+  const c=document.getElementById('sbot-qr');c.innerHTML='';
+  const t=SBOT_T[lang]||SBOT_T.en;
+  t.qr.forEach(q=>{
+    const b=document.createElement('button');b.className='sqr';b.textContent=q;
+    b.onclick=()=>sbotSendText(q);
+    c.appendChild(b);
+  });
+}
+function sbotFmtTime(){const n=new Date();return n.getHours().toString().padStart(2,'0')+':'+n.getMinutes().toString().padStart(2,'0')}
+function sbotAppend(role,text){
+  const msgs=document.getElementById('sbot-msgs');
+  const d=document.createElement('div');d.className='smsg '+role;
+  d.innerHTML=`<div class="smsg-bubble">${text}</div><div class="smsg-time">${sbotFmtTime()}</div>`;
+  msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;
+}
+function sbotShowTyping(){
+  const msgs=document.getElementById('sbot-msgs');
+  const d=document.createElement('div');d.className='sbot-typing';d.id='sbot-typing';
+  d.innerHTML='<span></span><span></span><span></span>';
+  msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;
+}
+function sbotHideTyping(){const t=document.getElementById('sbot-typing');if(t)t.remove();}
+
+async function sbotSend(){sbotSendText(document.getElementById('sbot-inp').value);}
+async function sbotSendText(txt){
+  txt=txt.trim();if(!txt||sbotTyping)return;
+  document.getElementById('sbot-inp').value='';
+  document.getElementById('sbot-qr').innerHTML='';
+  sbotAppend('user',txt);
+  sbotTyping=true;
+  document.getElementById('sbot-send').disabled=true;
+  sbotShowTyping();
+
+  const system=`You are the customer support assistant for PawDoc, an AI veterinary assistant web app.
+
+PRICING:
+- Free: €0 — 3 questions/day, basic symptom analysis, all animals, 8 languages
+- Basic: €20/month (first month €10) — unlimited questions, photo analysis, health history (1 pet), PDF report
+- Plus: €45/month (first month €22) — everything in Basic + up to 5 pets, smart reminders, priority AI, vet finder
+- Pro: €99/month (first month €49) — everything in Plus + unlimited pets, clinic dashboard, API access, white-label
+
+YEARLY: 20% discount on all paid plans.
+FIRST MONTH: 50% off for all new accounts.
+CANCELLATION: Anytime, no fees.
+ANIMALS: All animals supported — dogs, cats, rabbits, birds, fish, reptiles, horses, farm animals, and more.
+ACCURACY: ~98% on common conditions.
+DISCLAIMER: Not a medical diagnosis — always consult a real vet for serious issues.
+LANGUAGES: EN, DE, AR, TR, RU, FR, ES, ZH with RTL support for Arabic.
+
+Answer in the user's language (${lang}). Be concise, friendly, and helpful. Max 3 sentences.`;
+
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system,messages:[{role:'user',content:txt}]})
+    });
+    const data=await res.json();
+    sbotHideTyping();
+    const reply=(data.content&&data.content[0]&&data.content[0].text)||'Sorry, try again.';
+    sbotAppend('bot',reply);
+  }catch(e){
+    sbotHideTyping();
+    sbotAppend('bot','⚠ Connection error. Please try again.');
+  }
+  sbotTyping=false;
+  document.getElementById('sbot-send').disabled=false;
+  renderSbotQR();
+}
+
+initChat();renderAnimalRow();renderFeatures();renderAnimalsGrid();renderPricing();renderFAQ();applyLang();
+</script>
+</body>
+</html>
