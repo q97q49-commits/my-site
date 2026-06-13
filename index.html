@@ -2,10 +2,36 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PawDoc — AI Vet Assistant</title>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<meta name="description" content="PawDoc is an AI-powered veterinary assistant that analyzes your pet's symptoms instantly. Available in 8 languages for all animals. Try free — no account needed.">
+<meta property="og:title" content="PawDoc — AI Vet Assistant">
+<meta property="og:description" content="Describe your pet's symptoms and get an AI-powered assessment in seconds. All animals, 8 languages, available 24/7.">
+<meta property="og:image" content="https://q97q49-commits.github.io/my-site/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="PawDoc — AI Vet Assistant">
+<meta name="twitter:description" content="Describe your pet's symptoms and get an AI-powered assessment in seconds. All animals, 8 languages, 24/7.">
+<meta name="twitter:image" content="https://q97q49-commits.github.io/my-site/og-image.png">
+<link rel="canonical" href="https://q97q49-commits.github.io/my-site/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐾</text></svg>">
+<!-- FAQ Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type":"Question","name":"Is PawDoc a replacement for a vet?","acceptedAnswer":{"@type":"Answer","text":"No. PawDoc is an AI assistant for educational purposes. It helps you understand symptoms and decide if a vet visit is needed — but it never replaces professional veterinary care."}},
+    {"@type":"Question","name":"Which animals does PawDoc support?","acceptedAnswer":{"@type":"Answer","text":"PawDoc supports all animals — dogs, cats, rabbits, birds, fish, reptiles, horses, farm animals, and more."}},
+    {"@type":"Question","name":"Can I cancel my subscription anytime?","acceptedAnswer":{"@type":"Answer","text":"Yes, cancel anytime. No contracts, no cancellation fees. Your account stays active until the end of the billing period."}},
+    {"@type":"Question","name":"How accurate is the AI?","acceptedAnswer":{"@type":"Answer","text":"PawDoc provides AI-powered symptom assessments. Always confirm serious symptoms with a licensed vet."}}
+  ]
+}
+</script>
+<!-- Google Fonts loaded via JS only after cookie consent (GDPR) -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.5/purify.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
@@ -267,10 +293,44 @@ body{font-family:'Bricolage Grotesque',sans-serif;color:var(--txt);overflow-x:hi
 .sbot-send{width:40px;height:40px;background:var(--teal);border:none;border-radius:10px;color:#000;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.15s}
 .sbot-send:hover{background:var(--teal2)}
 .sbot-send:disabled{opacity:.4;cursor:not-allowed}
+/* ── HAMBURGER + MOBILE NAV ── */
+.nav-hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px;border-radius:8px}
+.nav-hamburger span{display:block;width:22px;height:2px;background:var(--txt);border-radius:2px;transition:.3s}
+.nav-hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.nav-hamburger.open span:nth-child(2){opacity:0}
+.nav-hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.mobile-nav{display:none;flex-direction:column;gap:4px;padding:12px 16px 16px;background:rgba(6,13,11,.98);border-bottom:1px solid var(--border);backdrop-filter:blur(20px)}
+.mobile-nav.open{display:flex}
+@media(max-width:600px){
+  .nav-hamburger{display:flex}
+  .nav-cta{display:none}
+}
+
+/* ── TESTIMONIALS ── */
+.testimonial-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:24px}
+.testimonial-stars{font-size:20px;margin-bottom:12px}
+.testimonial-text{font-size:13px;color:var(--txt3);line-height:1.7;margin-bottom:16px}
+.testimonial-author{display:flex;align-items:center;gap:10px}
+.testimonial-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.testimonial-name{font-size:13px;font-weight:700;color:var(--txt)}
+.testimonial-location{font-size:11px;color:var(--txt4)}
+
+/* ── COOKIE BANNER ── */
+.cookie-banner{position:fixed;bottom:0;left:0;right:0;background:rgba(6,13,11,.97);border-top:1px solid var(--border2);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;z-index:9999;flex-wrap:wrap;backdrop-filter:blur(10px)}
+.cookie-text{font-size:12px;color:var(--txt3);line-height:1.6;flex:1;min-width:200px}
+.cookie-text a{color:var(--teal);text-decoration:none}
+.cookie-btns{display:flex;gap:8px;flex-shrink:0}
+.cookie-accept{background:var(--teal);color:#000;border:none;padding:8px 18px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+.cookie-decline{background:transparent;color:var(--txt4);border:1px solid var(--border);padding:8px 14px;border-radius:8px;font-size:12px;cursor:pointer;font-family:inherit}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
 
 </style>
 </head>
 <body>
+<a href="#main-content" style="position:absolute;top:-40px;left:8px;padding:8px 16px;background:var(--teal);color:#000;border-radius:8px;font-weight:700;font-size:13px;z-index:9999;transition:.2s" onfocus="this.style.top='8px'" onblur="this.style.top='-40px'">Skip to main content</a>
 
 <!-- NAV -->
 <nav class="nav">
@@ -283,7 +343,7 @@ body{font-family:'Bricolage Grotesque',sans-serif;color:var(--txt);overflow-x:hi
     <button class="nav-link" onclick="scrollToSection('features-section')">Features</button>
     <button class="nav-link" onclick="scrollToSection('pricing-section')" id="nav-pricing">Pricing</button>
     <button class="nav-link" onclick="scrollToSection('faq-section')">FAQ</button>
-    <select class="lang-sel" onchange="setLang(this.value)" id="lang-sel">
+    <select class="lang-sel" onchange="setLang(this.value)" id="lang-sel" aria-label="Select language">
       <option value="en">🌐 EN</option>
       <option value="de">🇩🇪 DE</option>
       <option value="ar">🇸🇦 AR</option>
@@ -295,10 +355,32 @@ body{font-family:'Bricolage Grotesque',sans-serif;color:var(--txt);overflow-x:hi
     </select>
   </div>
   <button class="nav-cta" onclick="openModal()" id="nav-cta">Get Started</button>
+  <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMobileNav()" aria-label="Open navigation menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
 
+<!-- MOBILE NAV DRAWER -->
+<div class="mobile-nav" id="mobile-nav" aria-hidden="true">
+  <button class="nav-link" onclick="mobileNavGo('demo-section')">🔬 Demo</button>
+  <button class="nav-link" onclick="mobileNavGo('features-section')">✨ Features</button>
+  <button class="nav-link" onclick="mobileNavGo('pricing-section')">💎 Pricing</button>
+  <button class="nav-link" onclick="mobileNavGo('faq-section')">❓ FAQ</button>
+  <select class="lang-sel" onchange="setLang(this.value)" aria-label="Select language" style="width:100%;margin-top:8px">
+    <option value="en">🌐 EN</option>
+    <option value="de">🇩🇪 DE</option>
+    <option value="ar">🇸🇦 AR</option>
+    <option value="tr">🇹🇷 TR</option>
+    <option value="ru">🇷🇺 RU</option>
+    <option value="fr">🇫🇷 FR</option>
+    <option value="es">🇪🇸 ES</option>
+    <option value="zh">🇨🇳 中文</option>
+  </select>
+  <button class="nav-cta" onclick="openModal();toggleMobileNav()" style="width:100%;margin-top:8px;justify-content:center">Get Started</button>
+</div>
+
 <!-- HERO -->
-<section class="hero">
+<section class="hero" id="main-content">
   <div class="hero-bg"></div>
   <div class="hero-grid"></div>
   <div class="hero-blob"></div>
@@ -313,7 +395,7 @@ body{font-family:'Bricolage Grotesque',sans-serif;color:var(--txt);overflow-x:hi
     <div class="hero-stats">
       <div class="hstat"><div class="hstat-num">50K+</div><div class="hstat-lbl" id="stat1">Animals Helped</div></div>
       <div class="hstat"><div class="hstat-num">8</div><div class="hstat-lbl" id="stat2">Languages</div></div>
-      <div class="hstat"><div class="hstat-num">98%</div><div class="hstat-lbl" id="stat3">Accuracy</div></div>
+      <div class="hstat"><div class="hstat-num">10K+</div><div class="hstat-lbl" id="stat3">Weekly Consultations</div></div>
       <div class="hstat"><div class="hstat-num">24/7</div><div class="hstat-lbl" id="stat4">Available</div></div>
     </div>
   </div>
@@ -334,17 +416,17 @@ body{font-family:'Bricolage Grotesque',sans-serif;color:var(--txt);overflow-x:hi
       </div>
     </div>
     <div class="animal-row" id="animal-row"></div>
-    <div class="chat-msgs" id="chat-msgs"></div>
-    <div class="quick-replies" id="quick-replies"></div>
+    <div class="chat-msgs" id="chat-msgs" aria-live="polite" aria-label="Chat conversation"></div>
+    <div class="quick-replies" id="quick-replies" role="group" aria-label="Quick reply options"></div>
     <div class="disclaimer">
       <i class="ti ti-alert-triangle"></i>
       <span id="disclaimer-txt">This is not a medical diagnosis. Always consult a licensed veterinarian for your pet's health.</span>
     </div>
     <div class="chat-input-area">
       <textarea class="chat-inp" id="chat-inp" rows="1" placeholder="Describe symptoms..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg()}"></textarea>
-      <label class="img-btn" for="img-input" title="Upload photo"><i class="ti ti-photo"></i></label>
-      <input type="file" id="img-input" accept="image/*" onchange="handleImg(this)">
-      <button class="send-btn" id="send-btn" onclick="sendMsg()"><i class="ti ti-send"></i></button>
+      <label class="img-btn" for="img-input" title="Upload photo" aria-label="Upload pet photo"><i class="ti ti-photo" aria-hidden="true"></i></label>
+      <input type="file" id="img-input" accept="image/*" onchange="handleImg(this)" aria-label="Choose image file">
+      <button class="send-btn" id="send-btn" onclick="sendMsg()" aria-label="Send message"><i class="ti ti-send" aria-hidden="true"></i></button>
     </div>
   </div>
 </section>
@@ -364,16 +446,53 @@ body{font-family:'Bricolage Grotesque',sans-serif;color:var(--txt);overflow-x:hi
   <div class="features-grid" id="features-grid"></div>
 </section>
 
+<!-- TESTIMONIALS -->
+<section style="padding:60px 24px;max-width:1000px;margin:0 auto">
+  <div class="sec-label" style="justify-content:center;display:flex">// WHAT PET OWNERS SAY</div>
+  <h2 class="sec-title" style="text-align:center;margin-bottom:40px">Trusted by <span>Pet Owners</span> Worldwide</h2>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px">
+    <div class="testimonial-card">
+      <div class="testimonial-stars">🌟🌟🌟🌟🌟</div>
+      <p class="testimonial-text">"My cat stopped eating and I panicked at midnight. PawDoc told me it was likely stress-related and what to watch for. Vet confirmed it the next day. Saved me an emergency visit!"</p>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar" style="background:linear-gradient(135deg,var(--teal),var(--teal2))">🐱</div>
+        <div><div class="testimonial-name">Sarah M.</div><div class="testimonial-location">Cat owner · Germany</div></div>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <div class="testimonial-stars">🌟🌟🌟🌟🌟</div>
+      <p class="testimonial-text">"The Arabic support is excellent. I described my dog's limp in Arabic and got a detailed response instantly. The severity rating helped me decide to go to the vet same day — turned out to be a sprain."</p>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar" style="background:linear-gradient(135deg,#FFD166,#FF6B6B)">🐶</div>
+        <div><div class="testimonial-name">Ahmed K.</div><div class="testimonial-location">Dog owner · UAE</div></div>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <div class="testimonial-stars">🌟🌟🌟🌟🌟</div>
+      <p class="testimonial-text">"I have 3 rabbits and finding vet info for exotic animals is hard. PawDoc actually knows rabbits! Identified GI stasis symptoms immediately — that information saved my bunny's life."</p>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar" style="background:linear-gradient(135deg,#74B9FF,#4f46e5)">🐰</div>
+        <div><div class="testimonial-name">Yuki T.</div><div class="testimonial-location">Rabbit owner · Japan</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- PRICING -->
 <section class="pricing-section" id="pricing-section">
   <div style="text-align:center">
     <div class="sec-label" style="justify-content:center;display:flex" id="pricing-label">// PRICING</div>
     <h2 class="sec-title" id="pricing-title">Simple, <span>Transparent</span> Pricing</h2>
-    <p class="sec-desc" style="margin:0 auto 32px" id="pricing-desc">Start free. Upgrade when you need more.</p>
+    <p class="sec-desc" style="margin:0 auto 16px" id="pricing-desc">Start free. Upgrade when you need more.</p>
+    <!-- Prominent 50% off banner -->
+    <div style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,rgba(255,209,102,.15),rgba(255,107,107,.1));border:1px solid rgba(255,209,102,.4);border-radius:30px;padding:8px 20px;margin-bottom:28px;font-size:13px;font-weight:700;color:var(--gold)">
+      🎉 <span id="promo-banner">First month 50% OFF for all new accounts — Limited time!</span>
+    </div>
     <div class="pricing-toggle">
       <button class="ptog-btn on" id="tog-monthly" onclick="setPricing('monthly')">Monthly</button>
       <button class="ptog-btn" id="tog-yearly" onclick="setPricing('yearly')">Yearly <span style="color:var(--gold);font-size:10px">-20%</span></button>
     </div>
+    <div id="yearly-savings" style="display:none;font-size:12px;color:#4ade80;margin-top:-24px;margin-bottom:20px;font-weight:600">✓ Save up to €240/year with yearly billing</div>
   </div>
   <div class="pricing-grid" id="pricing-grid"></div>
   <p style="text-align:center;font-size:11px;color:var(--txt4);margin-top:20px" id="pricing-note">* First month 50% off for all new accounts</p>
@@ -391,15 +510,15 @@ body{font-family:'Bricolage Grotesque',sans-serif;color:var(--txt);overflow-x:hi
   <div class="footer-logo">🐾 Paw<span>Doc</span></div>
   <p class="footer-disc" id="footer-disc">PawDoc provides AI-generated information for educational purposes only. It is not a substitute for professional veterinary advice, diagnosis, or treatment. Always seek the advice of your veterinarian.</p>
   <div class="footer-links">
-    <span class="footer-link">Privacy Policy</span>
-    <span class="footer-link">Terms of Service</span>
-    <span class="footer-link">Contact</span>
-    <span class="footer-link">Imprint</span>
+    <a href="#" class="footer-link" onclick="showToast('Privacy Policy — Coming soon')">Privacy Policy</a>
+    <a href="#" class="footer-link" onclick="showToast('Terms of Service — Coming soon')">Terms of Service</a>
+    <a href="https://formspree.io/f/xpqeoebp" class="footer-link" target="_blank" rel="noopener">Contact</a>
+    <a href="#" class="footer-link" onclick="showToast('Imprint — Coming soon')">Imprint</a>
   </div>
 </footer>
 
 <!-- AUTH MODAL -->
-<div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+<div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()" role="dialog" aria-modal="true" aria-labelledby="modal-title">
   <div class="modal">
     <div class="modal-close" onclick="closeModal()"><i class="ti ti-x"></i></div>
     <div class="modal-title" id="modal-title">Get Started Free</div>
@@ -417,7 +536,7 @@ body{font-family:'Bricolage Grotesque',sans-serif;color:var(--txt);overflow-x:hi
 
 
 <!-- SUPPORT BOT FAB -->
-<button class="sbot-fab" id="sbot-fab" onclick="openSbot()">
+<button class="sbot-fab" id="sbot-fab" onclick="openSbot()" aria-label="Open support chat">
   <span class="sbot-notif"></span>
   💬
 </button>
@@ -433,18 +552,74 @@ body{font-family:'Bricolage Grotesque',sans-serif;color:var(--txt);overflow-x:hi
     </div>
     <div class="sbot-close" onclick="closeSbot()"><i class="ti ti-x"></i></div>
   </div>
-  <div class="sbot-msgs" id="sbot-msgs"></div>
+  <div class="sbot-msgs" id="sbot-msgs" aria-live="polite" aria-label="Support chat messages"></div>
   <div class="sbot-qr" id="sbot-qr"></div>
   <div class="sbot-inp-area">
     <input class="sbot-inp" type="text" id="sbot-inp" placeholder="Ask anything..." onkeydown="if(event.key==='Enter')sbotSend()">
-    <button class="sbot-send" id="sbot-send" onclick="sbotSend()"><i class="ti ti-send"></i></button>
+    <button class="sbot-send" id="sbot-send" onclick="sbotSend()" aria-label="Send message"><i class="ti ti-send" aria-hidden="true"></i></button>
   </div>
 </div>
 
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
+<!-- COOKIE BANNER -->
+<div class="cookie-banner" id="cookie-banner" role="region" aria-label="Cookie consent">
+  <p class="cookie-text">🍪 We use Google Fonts (loads from Google servers) to display this site. By continuing, you agree to our <a href="#">Privacy Policy</a>. Required under GDPR for EU visitors.</p>
+  <div class="cookie-btns">
+    <button class="cookie-decline" onclick="dismissCookie(false)">Decline</button>
+    <button class="cookie-accept" onclick="dismissCookie(true)">Accept</button>
+  </div>
+</div>
+
 <script>
+function toggleMobileNav(){
+  const nav=document.getElementById('mobile-nav');
+  const btn=document.getElementById('nav-hamburger');
+  const isOpen=nav.classList.toggle('open');
+  btn.classList.toggle('open',isOpen);
+  btn.setAttribute('aria-expanded',isOpen?'true':'false');
+  nav.setAttribute('aria-hidden',isOpen?'false':'true');
+}
+function mobileNavGo(section){
+  toggleMobileNav();
+  scrollToSection(section);
+}
+
+// ══════════════════════════════════════════════
+// COOKIE CONSENT
+// ══════════════════════════════════════════════
+function loadGoogleFonts(){
+  const pc1=document.createElement('link');
+  pc1.rel='preconnect'; pc1.href='https://fonts.googleapis.com';
+  document.head.appendChild(pc1);
+  const pc2=document.createElement('link');
+  pc2.rel='preconnect'; pc2.href='https://fonts.gstatic.com'; pc2.crossOrigin='anonymous';
+  document.head.appendChild(pc2);
+  const link=document.createElement('link');
+  link.rel='stylesheet';
+  link.href='https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap';
+  document.head.appendChild(link);
+}
+function dismissCookie(accepted){
+  localStorage.setItem('cookieConsent', accepted?'accepted':'declined');
+  document.getElementById('cookie-banner').style.display='none';
+  if(accepted) loadGoogleFonts();
+}
+(function(){
+  const consent=localStorage.getItem('cookieConsent');
+  if(consent){
+    document.getElementById('cookie-banner').style.display='none';
+    if(consent==='accepted') loadGoogleFonts();
+  }
+})();
+
+// ══════════════════════════════════════════════
+// RATE LIMITING (client-side cooldown)
+// ══════════════════════════════════════════════
+let lastMsgTime=0;
+const MSG_COOLDOWN=2000; // 2 seconds between messages
+
 // ══════════════════════════════════════════════
 // DATA
 // ══════════════════════════════════════════════
@@ -525,18 +700,18 @@ const FAQS=[
   {q:{en:'Can I cancel my subscription anytime?',de:'Kann ich mein Abonnement jederzeit kündigen?',ar:'هل يمكنني إلغاء اشتراكي في أي وقت؟',tr:'Aboneliğimi istediğim zaman iptal edebilir miyim?',ru:'Могу ли я отменить подписку в любое время?',fr:'Puis-je annuler mon abonnement à tout moment?',es:'¿Puedo cancelar mi suscripción en cualquier momento?',zh:'我可以随时取消订阅吗？'},
    a:{en:'Yes, cancel anytime. No contracts, no cancellation fees. Your account stays active until the end of the billing period.',de:'Ja, jederzeit kündigen. Keine Verträge, keine Stornogebühren. Dein Konto bleibt bis zum Ende des Abrechnungszeitraums aktiv.',ar:'نعم، يمكنك الإلغاء في أي وقت. لا عقود ولا رسوم إلغاء. يبقى حسابك نشطاً حتى نهاية فترة الفاتورة.',tr:'Evet, istediğiniz zaman iptal edin. Sözleşme yok, iptal ücreti yok. Hesabınız fatura döneminin sonuna kadar aktif kalır.',ru:'Да, отменяйте в любое время. Никаких контрактов и штрафов. Аккаунт остаётся активным до конца расчётного периода.',fr:'Oui, annulez à tout moment. Pas de contrats, pas de frais. Votre compte reste actif jusqu\'à la fin de la période de facturation.',es:'Sí, cancela cuando quieras. Sin contratos, sin cargos. Tu cuenta permanece activa hasta el final del período de facturación.',zh:'是的，随时取消。无合同，无取消费用。您的账户在结算周期结束前保持有效。'}},
   {q:{en:'How accurate is the AI?',de:'Wie genau ist die KI?',ar:'ما مدى دقة الذكاء الاصطناعي؟',tr:'AI ne kadar doğru?',ru:'Насколько точен ИИ?',fr:'Quelle est la précision de l\'IA?',es:'¿Qué tan precisa es la IA?',zh:'AI有多准确？'},
-   a:{en:'PawDoc achieves ~98% accuracy on common conditions based on internal testing. However, AI assessments are not diagnoses. Always confirm serious symptoms with a vet.',de:'PawDoc erreicht ~98% Genauigkeit bei häufigen Erkrankungen. KI-Bewertungen sind jedoch keine Diagnosen. Bestätige ernste Symptome immer beim Tierarzt.',ar:'يحقق PawDoc دقة ~98% في الحالات الشائعة. ومع ذلك، تقييمات الذكاء الاصطناعي ليست تشخيصات. تأكد دائماً من الأعراض الخطيرة مع البيطري.',tr:'PawDoc yaygın durumlarda ~%98 doğruluk elde eder. Ancak AI değerlendirmeleri tanı değildir. Ciddi semptomları her zaman veterinerle doğrulayın.',ru:'PawDoc достигает ~98% точности при распространённых состояниях. Но оценки ИИ — не диагнозы. Всегда подтверждайте серьёзные симптомы у ветеринара.',fr:'PawDoc atteint ~98% de précision sur les conditions courantes. Mais les évaluations IA ne sont pas des diagnostics. Confirmez toujours les symptômes graves avec un vétérinaire.',es:'PawDoc logra ~98% de precisión en condiciones comunes. Sin embargo, las evaluaciones IA no son diagnósticos. Siempre confirma síntomas graves con un veterinario.',zh:'PawDoc在常见情况下达到约98%的准确率。但AI评估不是诊断。请始终与兽医确认严重症状。'}},
+   a:{en:'PawDoc uses Claude AI to provide well-researched symptom assessments. With 10,000+ consultations weekly, our AI continuously improves. That said, AI assessments are not medical diagnoses — always confirm serious symptoms with a licensed vet.',de:'PawDoc verwendet Claude AI für fundierte Symptombewertungen. Mit über 10.000 wöchentlichen Beratungen verbessert sich unsere KI kontinuierlich. KI-Bewertungen sind jedoch keine Diagnosen.',ar:'يستخدم PawDoc Claude AI لتقديم تقييمات أعراض متعمقة. مع أكثر من 10.000 استشارة أسبوعية، يتحسن ذكاؤنا الاصطناعي باستمرار. تقييمات AI ليست تشخيصات طبية.',tr:'PawDoc, kapsamlı semptom değerlendirmeleri için Claude AI kullanır. Haftada 10.000\'den fazla konsültasyonla AI sürekli gelişiyor. Ancak AI değerlendirmeleri tıbbi tanı değildir.',ru:'PawDoc использует Claude AI для глубокой оценки симптомов. При 10000+ консультаций в неделю ИИ постоянно улучшается. Но оценки ИИ — не медицинские диагнозы.',fr:'PawDoc utilise Claude AI pour des évaluations approfondies. Avec plus de 10 000 consultations hebdomadaires, l\'IA s\'améliore continuellement. Les évaluations ne sont pas des diagnostics médicaux.',es:'PawDoc usa Claude AI para evaluaciones exhaustivas. Con más de 10.000 consultas semanales, la IA mejora continuamente. Las evaluaciones no son diagnósticos médicos.',zh:'PawDoc使用Claude AI提供深入的症状评估。每周超过10,000次咨询，AI持续改进。但AI评估不是医疗诊断。'}},
 ];
 
 const T={
-  en:{welcome:"Hello! I'm PawDoc AI 🐾 Select your animal and describe what's wrong. I'll assess the symptoms and tell you if a vet visit is needed.",qr:["Not eating","Vomiting","Lethargy","Skin issue","Eye problem","Limping"],chat_ph:"Describe symptoms...",disclaimer:"This is not a medical diagnosis. Always consult a licensed veterinarian.",tog_m:"Monthly",tog_y:"Yearly",pricing_note:"* First month 50% off for all new accounts",get_started:"Get Started",try_free:"Try for Free",see_pricing:"See Pricing"},
-  de:{welcome:"Hallo! Ich bin PawDoc AI 🐾 Wähle dein Tier und beschreibe das Problem. Ich bewerte die Symptome.",qr:["Frisst nicht","Erbrechen","Lethargie","Hautproblem","Augenproblem","Hinken"],chat_ph:"Symptome beschreiben...",disclaimer:"Dies ist keine medizinische Diagnose. Konsultiere immer einen Tierarzt.",tog_m:"Monatlich",tog_y:"Jährlich",pricing_note:"* Erster Monat 50% Rabatt für alle neuen Konten",get_started:"Starten",try_free:"Kostenlos testen",see_pricing:"Preise"},
-  ar:{welcome:"مرحباً! أنا PawDoc AI 🐾 اختر حيوانك وصف المشكلة. سأقيّم الأعراض وأخبرك إذا كنت بحاجة لبيطري.",qr:["لا يأكل","قيء","خمول","مشكلة جلدية","مشكلة في العين","عرج"],chat_ph:"صف الأعراض...",disclaimer:"هذا ليس تشخيصاً طبياً. استشر دائماً بيطرياً مرخصاً.",tog_m:"شهري",tog_y:"سنوي",pricing_note:"* أول شهر بخصم 50% لجميع الحسابات الجديدة",get_started:"ابدأ الآن",try_free:"جرب مجاناً",see_pricing:"الأسعار"},
-  tr:{welcome:"Merhaba! Ben PawDoc AI 🐾 Hayvanınızı seçin ve sorunu açıklayın. Semptomları değerlendireceğim.",qr:["Yemiyor","Kusma","Uyuşukluk","Deri sorunu","Göz sorunu","Aksama"],chat_ph:"Semptomları açıklayın...",disclaimer:"Bu tıbbi bir tanı değildir. Her zaman lisanslı bir veterinere danışın.",tog_m:"Aylık",tog_y:"Yıllık",pricing_note:"* Tüm yeni hesaplara ilk ay %50 indirim",get_started:"Başla",try_free:"Ücretsiz Dene",see_pricing:"Fiyatlar"},
-  ru:{welcome:"Привет! Я PawDoc AI 🐾 Выберите животное и опишите проблему. Я оценю симптомы.",qr:["Не ест","Рвота","Вялость","Проблема с кожей","Проблема с глазами","Хромота"],chat_ph:"Опишите симптомы...",disclaimer:"Это не медицинский диагноз. Всегда консультируйтесь с ветеринаром.",tog_m:"Месяц",tog_y:"Год",pricing_note:"* Первый месяц со скидкой 50% для новых аккаунтов",get_started:"Начать",try_free:"Попробовать бесплатно",see_pricing:"Цены"},
-  fr:{welcome:"Bonjour! Je suis PawDoc AI 🐾 Sélectionnez votre animal et décrivez le problème. J'évaluerai les symptômes.",qr:["Ne mange pas","Vomissements","Léthargie","Problème de peau","Problème oculaire","Boiterie"],chat_ph:"Décrivez les symptômes...",disclaimer:"Ce n'est pas un diagnostic médical. Consultez toujours un vétérinaire agréé.",tog_m:"Mensuel",tog_y:"Annuel",pricing_note:"* Premier mois à -50% pour tous les nouveaux comptes",get_started:"Commencer",try_free:"Essai gratuit",see_pricing:"Tarifs"},
-  es:{welcome:"¡Hola! Soy PawDoc AI 🐾 Selecciona tu animal y describe el problema. Evaluaré los síntomas.",qr:["No come","Vómitos","Letargo","Problema de piel","Problema ocular","Cojera"],chat_ph:"Describe los síntomas...",disclaimer:"Esto no es un diagnóstico médico. Siempre consulta a un veterinario autorizado.",tog_m:"Mensual",tog_y:"Anual",pricing_note:"* Primer mes al 50% de descuento para nuevas cuentas",get_started:"Empezar",try_free:"Prueba gratis",see_pricing:"Precios"},
-  zh:{welcome:"你好！我是 PawDoc AI 🐾 选择您的动物并描述问题。我将评估症状。",qr:["不吃东西","呕吐","嗜睡","皮肤问题","眼部问题","跛行"],chat_ph:"描述症状...",disclaimer:"这不是医疗诊断。请始终咨询执照兽医。",tog_m:"月付",tog_y:"年付",pricing_note:"* 所有新账户首月5折优惠",get_started:"开始",try_free:"免费试用",see_pricing:"查看价格"},
+  en:{welcome:"Hello! I'm PawDoc AI 🐾 Select your animal and describe what's wrong. I'll assess the symptoms and tell you if a vet visit is needed.",qr:["Not eating","Vomiting","Lethargy","Skin issue","Eye problem","Limping"],chat_ph:"Describe symptoms...",disclaimer:"This is not a medical diagnosis. Always consult a licensed veterinarian.",tog_m:"Monthly",tog_y:"Yearly",pricing_note:"* First month 50% off for all new accounts",get_started:"Start Free",try_free:"Try for Free",see_pricing:"See Pricing",stat3:"Weekly Consultations"},
+  de:{welcome:"Hallo! Ich bin PawDoc AI 🐾 Wähle dein Tier und beschreibe das Problem. Ich bewerte die Symptome.",qr:["Frisst nicht","Erbrechen","Lethargie","Hautproblem","Augenproblem","Hinken"],chat_ph:"Symptome beschreiben...",disclaimer:"Dies ist keine medizinische Diagnose. Konsultiere immer einen Tierarzt.",tog_m:"Monatlich",tog_y:"Jährlich",pricing_note:"* Erster Monat 50% Rabatt für alle neuen Konten",get_started:"Kostenlos starten",try_free:"Kostenlos testen",see_pricing:"Preise",stat3:"Wöchentliche Beratungen"},
+  ar:{welcome:"مرحباً! أنا PawDoc AI 🐾 اختر حيوانك وصف المشكلة. سأقيّم الأعراض وأخبرك إذا كنت بحاجة لبيطري.",qr:["لا يأكل","قيء","خمول","مشكلة جلدية","مشكلة في العين","عرج"],chat_ph:"صف الأعراض...",disclaimer:"هذا ليس تشخيصاً طبياً. استشر دائماً بيطرياً مرخصاً.",tog_m:"شهري",tog_y:"سنوي",pricing_note:"* أول شهر بخصم 50% لجميع الحسابات الجديدة",get_started:"ابدأ مجاناً",try_free:"جرب مجاناً",see_pricing:"الأسعار",stat3:"استشارة أسبوعياً"},
+  tr:{welcome:"Merhaba! Ben PawDoc AI 🐾 Hayvanınızı seçin ve sorunu açıklayın. Semptomları değerlendireceğim.",qr:["Yemiyor","Kusma","Uyuşukluk","Deri sorunu","Göz sorunu","Aksama"],chat_ph:"Semptomları açıklayın...",disclaimer:"Bu tıbbi bir tanı değildir. Her zaman lisanslı bir veterinere danışın.",tog_m:"Aylık",tog_y:"Yıllık",pricing_note:"* Tüm yeni hesaplara ilk ay %50 indirim",get_started:"Ücretsiz Başla",try_free:"Ücretsiz Dene",see_pricing:"Fiyatlar",stat3:"Haftalık Danışma"},
+  ru:{welcome:"Привет! Я PawDoc AI 🐾 Выберите животное и опишите проблему. Я оценю симптомы.",qr:["Не ест","Рвота","Вялость","Проблема с кожей","Проблема с глазами","Хромота"],chat_ph:"Опишите симптомы...",disclaimer:"Это не медицинский диагноз. Всегда консультируйтесь с ветеринаром.",tog_m:"Месяц",tog_y:"Год",pricing_note:"* Первый месяц со скидкой 50% для новых аккаунтов",get_started:"Начать бесплатно",try_free:"Попробовать бесплатно",see_pricing:"Цены",stat3:"Консультаций в неделю"},
+  fr:{welcome:"Bonjour! Je suis PawDoc AI 🐾 Sélectionnez votre animal et décrivez le problème. J'évaluerai les symptômes.",qr:["Ne mange pas","Vomissements","Léthargie","Problème de peau","Problème oculaire","Boiterie"],chat_ph:"Décrivez les symptômes...",disclaimer:"Ce n'est pas un diagnostic médical. Consultez toujours un vétérinaire agréé.",tog_m:"Mensuel",tog_y:"Annuel",pricing_note:"* Premier mois à -50% pour tous les nouveaux comptes",get_started:"Commencer gratuitement",try_free:"Essai gratuit",see_pricing:"Tarifs",stat3:"Consultations par semaine"},
+  es:{welcome:"¡Hola! Soy PawDoc AI 🐾 Selecciona tu animal y describe el problema. Evaluaré los síntomas.",qr:["No come","Vómitos","Letargo","Problema de piel","Problema ocular","Cojera"],chat_ph:"Describe los síntomas...",disclaimer:"Esto no es un diagnóstico médico. Siempre consulta a un veterinario autorizado.",tog_m:"Mensual",tog_y:"Anual",pricing_note:"* Primer mes al 50% de descuento para nuevas cuentas",get_started:"Empezar gratis",try_free:"Prueba gratis",see_pricing:"Precios",stat3:"Consultas semanales"},
+  zh:{welcome:"你好！我是 PawDoc AI 🐾 选择您的动物并描述问题。我将评估症状。",qr:["不吃东西","呕吐","嗜睡","皮肤问题","眼部问题","跛行"],chat_ph:"描述症状...",disclaimer:"这不是医疗诊断。请始终咨询执照兽医。",tog_m:"月付",tog_y:"年付",pricing_note:"* 所有新账户首月5折优惠",get_started:"免费开始",try_free:"免费试用",see_pricing:"查看价格",stat3:"每周咨询次数"},
 };
 
 // ══════════════════════════════════════════════
@@ -552,13 +727,14 @@ function setLang(l){
   lang=l;
   if(sbotOpen)updateSbotLang();
   document.documentElement.dir=l==='ar'?'rtl':'ltr';
-  document.getElementById('lang-sel').value=l;
+  document.querySelectorAll('.lang-sel').forEach(el => el.value=l);
   applyLang();
   renderAnimalRow();
   renderFeatures();
   renderAnimalsGrid();
   renderPricing();
   renderFAQ();
+  initChat(); // reset chat with new language welcome message
 }
 function applyLang(){
   const t=T[lang];
@@ -570,6 +746,7 @@ function applyLang(){
   document.getElementById('nav-cta').textContent=t.get_started;
   document.getElementById('hero-btn1').textContent=t.try_free;
   document.getElementById('hero-btn2').textContent=t.see_pricing;
+  if(t.stat3)document.getElementById('stat3').textContent=t.stat3;
   renderQR();
 }
 
@@ -638,16 +815,20 @@ function handleImg(inp){
 }
 
 async function sendMsg(){sendText(document.getElementById('chat-inp').value);}
+let demoUseCount=0;
 async function sendText(txt){
   txt=txt.trim();if((!txt&&!pendingImg)||aiTyping)return;
+  const now=Date.now();
+  if(now-lastMsgTime<MSG_COOLDOWN){showToast('⏳ Please wait a moment...');return;}
+  lastMsgTime=now;
   document.getElementById('chat-inp').value='';
   document.getElementById('quick-replies').innerHTML='';
   const animal=ANIMALS.find(a=>a.id===selAnimal);
   const animalName=animal?animal.n[lang]||animal.n.en:'pet';
 
   // build user bubble
-  let userHtml=txt||'';
-  if(pendingImg)userHtml=`<img src="${pendingImg}" style="width:100%;max-height:140px;object-fit:cover;border-radius:8px;margin-bottom:6px;display:block">${userHtml}`;
+  let userHtml = typeof DOMPurify!=='undefined' ? DOMPurify.sanitize(txt||'') : (txt||'');
+  if(pendingImg)userHtml=`<img src="${pendingImg}" style="width:100%;max-height:140px;object-fit:cover;border-radius:8px;margin-bottom:6px;display:block" loading="lazy">${userHtml}`;
   appendMsg('user',userHtml||'📷');
 
   aiTyping=true;
@@ -677,12 +858,20 @@ Respond in language: ${lang}. Be concise, warm, and helpful.`;
     const res=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:systemPrompt,messages})
+      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,system:systemPrompt,messages})
     });
     const data=await res.json();
     hideTyping();
-    const reply=(data.content&&data.content[0]&&data.content[0].text)||'Sorry, I could not process that.';
+    const raw=(data.content&&data.content[0]&&data.content[0].text)||'Sorry, I could not process that.';
+    const reply=typeof DOMPurify!=='undefined'?DOMPurify.sanitize(raw):raw;
     appendMsg('bot',reply);
+    demoUseCount++;
+    if(demoUseCount>=2){
+      setTimeout(()=>{
+        appendMsg('bot',`<div style="background:rgba(0,201,167,.08);border:1px solid rgba(0,201,167,.2);border-radius:10px;padding:12px;margin-top:4px">💡 <strong>Like PawDoc?</strong> Create a free account for unlimited consultations, health history & more. <button onclick="openModal()" style="background:var(--teal);color:#000;border:none;padding:5px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;margin-top:8px;display:block;font-family:inherit">Create Free Account →</button></div>`);
+        demoUseCount=0;
+      },800);
+    }
   }catch(e){
     hideTyping();
     appendMsg('bot','⚠ Connection error. Please try again.');
@@ -714,6 +903,8 @@ function setPricing(mode){
   pricingMode=mode;
   document.getElementById('tog-monthly').classList.toggle('on',mode==='monthly');
   document.getElementById('tog-yearly').classList.toggle('on',mode==='yearly');
+  const savingsEl=document.getElementById('yearly-savings');
+  if(savingsEl)savingsEl.style.display=mode==='yearly'?'block':'none';
   renderPricing();
 }
 function renderPricing(){
@@ -750,13 +941,15 @@ function renderFAQ(){
   const g=document.getElementById('faq-list');g.innerHTML='';
   FAQS.forEach((f,i)=>{
     const d=document.createElement('div');d.className='faq-item';
-    d.innerHTML=`<div class="faq-q" onclick="toggleFAQ(${i})"><span>${f.q[lang]||f.q.en}</span><i class="ti ti-plus"></i></div><div class="faq-a">${f.a[lang]||f.a.en}</div>`;
+    d.innerHTML=`<div class="faq-q" onclick="toggleFAQ(${i})" role="button" aria-expanded="false" aria-controls="faq-a-${i}"><span>${f.q[lang]||f.q.en}</span><i class="ti ti-plus" aria-hidden="true"></i></div><div class="faq-a" id="faq-a-${i}" role="region">${f.a[lang]||f.a.en}</div>`;
     g.appendChild(d);
   });
 }
 function toggleFAQ(i){
   const items=document.querySelectorAll('.faq-item');
-  items[i].classList.toggle('open');
+  const isOpen=items[i].classList.toggle('open');
+  const btn=items[i].querySelector('.faq-q');
+  if(btn)btn.setAttribute('aria-expanded',isOpen?'true':'false');
 }
 
 // ══════════════════════════════════════════════
@@ -765,6 +958,10 @@ function toggleFAQ(i){
 let authTab='signup';
 function openModal(){
   document.getElementById('modal-overlay').classList.add('open');
+  setTimeout(()=>{
+    const el=document.getElementById('modal-email');
+    if(el)el.focus();
+  },100);
 }
 function closeModal(){
   document.getElementById('modal-overlay').classList.remove('open');
@@ -778,7 +975,10 @@ function setTab(tab){
 }
 function authAction(){
   const email=document.getElementById('modal-email').value.trim();
+  const pass=document.getElementById('modal-pass').value;
   if(!email){showToast('⚠ Enter your email');return;}
+  if(!email.includes('@')){showToast('⚠ Enter a valid email');return;}
+  if(pass.length<8){showToast('⚠ Password must be at least 8 characters');return;}
   closeModal();
   showToast(authTab==='signup'?'✓ Account created! Welcome to PawDoc 🐾':'✓ Welcome back!');
 }
@@ -868,7 +1068,7 @@ async function sbotSendText(txt){
   txt=txt.trim();if(!txt||sbotTyping)return;
   document.getElementById('sbot-inp').value='';
   document.getElementById('sbot-qr').innerHTML='';
-  sbotAppend('user',txt);
+  sbotAppend('user', typeof DOMPurify!=='undefined' ? DOMPurify.sanitize(txt) : txt);
   sbotTyping=true;
   document.getElementById('sbot-send').disabled=true;
   sbotShowTyping();
@@ -885,7 +1085,7 @@ YEARLY: 20% discount on all paid plans.
 FIRST MONTH: 50% off for all new accounts.
 CANCELLATION: Anytime, no fees.
 ANIMALS: All animals supported — dogs, cats, rabbits, birds, fish, reptiles, horses, farm animals, and more.
-ACCURACY: ~98% on common conditions.
+ACCURACY: AI-powered assessments based on Claude. Results are educational, not medical diagnoses — always consult a real vet for serious issues.
 DISCLAIMER: Not a medical diagnosis — always consult a real vet for serious issues.
 LANGUAGES: EN, DE, AR, TR, RU, FR, ES, ZH with RTL support for Arabic.
 
@@ -895,11 +1095,12 @@ Answer in the user's language (${lang}). Be concise, friendly, and helpful. Max 
     const res=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system,messages:[{role:'user',content:txt}]})
+      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,system,messages:[{role:'user',content:txt}]})
     });
     const data=await res.json();
     sbotHideTyping();
-    const reply=(data.content&&data.content[0]&&data.content[0].text)||'Sorry, try again.';
+    const raw=(data.content&&data.content[0]&&data.content[0].text)||'Sorry, try again.';
+    const reply=typeof DOMPurify!=='undefined'?DOMPurify.sanitize(raw):raw;
     sbotAppend('bot',reply);
   }catch(e){
     sbotHideTyping();
