@@ -32,6 +32,7 @@
 <!-- Google Fonts loaded via JS only after cookie consent (GDPR) -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.5/purify.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
@@ -929,7 +930,7 @@ function renderPricing(){
       ${firstStr?`<div class="plan-first">🎉 First month: €${firstStr}</div>`:'<div style="height:20px"></div>'}
       <div class="plan-sep"></div>
       <div class="plan-features">${feats}</div>
-      <button class="plan-btn" onclick="openModal()">${btnLbl}</button>`;
+      <button class="plan-btn" onclick="(function(){var links={basic:'https://buy.stripe.com/test_7sY7sK7hf3cggVvgRsfEk00',plus:'https://buy.stripe.com/test_7sYaEW9pneUY7kVbx8fEk01',pro:'https://buy.stripe.com/test_dRm9ASfNL6osax758KfEk02'};var l=links['${p.id}'];if(l)window.open(l,'_blank');else openModal();})()">${btnLbl}</button>`;
     g.appendChild(d);
   });
 }
@@ -955,7 +956,42 @@ function toggleFAQ(i){
 // ══════════════════════════════════════════════
 // MODAL
 // ══════════════════════════════════════════════
+// ══════════════════════════════════════════════
+// SUPABASE
+// ══════════════════════════════════════════════
+const _supa = supabase.createClient(
+  'https://atimsnxrlrsidjvswiln.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF0aW1zbnhybHJzaWRqdnN3aWxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1MDU4NzQsImV4cCI6MjA5NzA4MTg3NH0.OcK6ZOjIILOlAyG8pVXuHQmWHBPcfsKIxzXmanC1glc'
+);
+
+let _user = null;
 let authTab='signup';
+
+// Check session on load
+(async()=>{
+  const {data:{session}} = await _supa.auth.getSession();
+  if(session){
+    _user = session.user;
+    updateNavForUser(_user);
+  }
+})();
+
+function updateNavForUser(user){
+  const btn = document.getElementById('nav-cta');
+  if(btn && user){
+    btn.textContent = user.email.split('@')[0];
+    btn.onclick = () => signOut();
+  }
+}
+
+async function signOut(){
+  await _supa.auth.signOut();
+  _user = null;
+  const btn = document.getElementById('nav-cta');
+  if(btn){ btn.textContent='Get Started'; btn.onclick=()=>openModal(); }
+  showToast('👋 Signed out');
+}
+
 function openModal(){
   document.getElementById('modal-overlay').classList.add('open');
   setTimeout(()=>{
@@ -973,14 +1009,32 @@ function setTab(tab){
   document.getElementById('modal-name').style.display=tab==='signup'?'block':'none';
   document.getElementById('modal-btn').textContent=tab==='signup'?'Create Free Account':'Log In';
 }
-function authAction(){
+async function authAction(){
   const email=document.getElementById('modal-email').value.trim();
   const pass=document.getElementById('modal-pass').value;
   if(!email){showToast('⚠ Enter your email');return;}
   if(!email.includes('@')){showToast('⚠ Enter a valid email');return;}
   if(pass.length<8){showToast('⚠ Password must be at least 8 characters');return;}
-  closeModal();
-  showToast(authTab==='signup'?'✓ Account created! Welcome to PawDoc 🐾':'✓ Welcome back!');
+
+  const btn = document.getElementById('modal-btn');
+  btn.textContent = '...'; btn.disabled = true;
+
+  if(authTab==='signup'){
+    const {data,error} = await _supa.auth.signUp({email,password:pass});
+    btn.textContent='Create Free Account'; btn.disabled=false;
+    if(error){showToast('⚠ '+error.message);return;}
+    _user = data.user;
+    closeModal();
+    showToast('✓ Check your email to confirm your account 🐾');
+  } else {
+    const {data,error} = await _supa.auth.signInWithPassword({email,password:pass});
+    btn.textContent='Log In'; btn.disabled=false;
+    if(error){showToast('⚠ '+error.message);return;}
+    _user = data.user;
+    updateNavForUser(_user);
+    closeModal();
+    showToast('✓ Welcome back! 🐾');
+  }
 }
 
 // ══════════════════════════════════════════════
