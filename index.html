@@ -7,14 +7,14 @@
 <meta name="description" content="PawDoc is an AI-powered veterinary assistant that analyzes your pet's symptoms instantly. Available in 8 languages for all animals. Try free — no account needed.">
 <meta property="og:title" content="PawDoc — AI Vet Assistant">
 <meta property="og:description" content="Describe your pet's symptoms and get an AI-powered assessment in seconds. All animals, 8 languages, available 24/7.">
-<meta property="og:image" content="https://q97q49-commits.github.io/my-site/og-image.png">
+<meta property="og:image" content="https://weeds-ite.github.io/my-site/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="PawDoc — AI Vet Assistant">
 <meta name="twitter:description" content="Describe your pet's symptoms and get an AI-powered assessment in seconds. All animals, 8 languages, 24/7.">
-<meta name="twitter:image" content="https://q97q49-commits.github.io/my-site/og-image.png">
-<link rel="canonical" href="https://q97q49-commits.github.io/my-site/">
+<meta name="twitter:image" content="https://weeds-ite.github.io/my-site/og-image.png">
+<link rel="canonical" href="https://weeds-ite.github.io/my-site/">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐾</text></svg>">
 <!-- FAQ Schema -->
 <script type="application/ld+json">
@@ -530,7 +530,18 @@ body{font-family:'Bricolage Grotesque',sans-serif;color:var(--txt);overflow-x:hi
     </div>
     <input class="minput" type="text" id="modal-name" placeholder="Your name" style="display:none">
     <input class="minput" type="email" id="modal-email" placeholder="Email address">
-    <input class="minput" type="password" id="modal-pass" placeholder="Password">
+    <div style="position:relative;margin-bottom:10px">
+      <input class="minput" type="password" id="modal-pass" placeholder="Password" style="width:100%;padding-right:44px;margin-bottom:0">
+      <button type="button" onclick="togglePass('modal-pass','eye1')" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--txt3);padding:0" aria-label="Show password">
+        <i class="ti ti-eye" id="eye1" style="font-size:18px"></i>
+      </button>
+    </div>
+    <div id="modal-confirm-wrap" style="position:relative;margin-bottom:10px">
+      <input class="minput" type="password" id="modal-confirm" placeholder="Confirm password" style="width:100%;padding-right:44px;margin-bottom:0">
+      <button type="button" onclick="togglePass('modal-confirm','eye2')" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--txt3);padding:0" aria-label="Show confirm password">
+        <i class="ti ti-eye" id="eye2" style="font-size:18px"></i>
+      </button>
+    </div>
     <button class="modal-btn" id="modal-btn" onclick="authAction()">Create Free Account</button>
   </div>
 </div>
@@ -744,7 +755,7 @@ function applyLang(){
   document.getElementById('tog-monthly').textContent=t.tog_m;
   document.getElementById('tog-yearly').innerHTML=t.tog_y+' <span style="color:var(--gold);font-size:10px">-20%</span>';
   document.getElementById('pricing-note').textContent=t.pricing_note;
-  document.getElementById('nav-cta').textContent=t.get_started;
+  if(!_user) document.getElementById('nav-cta').textContent=t.get_started;
   document.getElementById('hero-btn1').textContent=t.try_free;
   document.getElementById('hero-btn2').textContent=t.see_pricing;
   if(t.stat3)document.getElementById('stat3').textContent=t.stat3;
@@ -988,7 +999,7 @@ async function signOut(){
   await _supa.auth.signOut();
   _user = null;
   const btn = document.getElementById('nav-cta');
-  if(btn){ btn.textContent='Get Started'; btn.onclick=()=>openModal(); }
+  if(btn){ btn.textContent=(T[lang]||T.en).get_started; btn.onclick=()=>openModal(); }
   showToast('👋 Signed out');
 }
 
@@ -1002,11 +1013,23 @@ function openModal(){
 function closeModal(){
   document.getElementById('modal-overlay').classList.remove('open');
 }
+function togglePass(inputId, iconId){
+  const input = document.getElementById(inputId);
+  const icon = document.getElementById(iconId);
+  if(input.type==='password'){
+    input.type='text';
+    icon.className='ti ti-eye-off';
+  } else {
+    input.type='password';
+    icon.className='ti ti-eye';
+  }
+}
 function setTab(tab){
   authTab=tab;
   document.getElementById('tab-signup').classList.toggle('on',tab==='signup');
   document.getElementById('tab-login').classList.toggle('on',tab==='login');
   document.getElementById('modal-name').style.display=tab==='signup'?'block':'none';
+  document.getElementById('modal-confirm-wrap').style.display=tab==='signup'?'block':'none';
   document.getElementById('modal-btn').textContent=tab==='signup'?'Create Free Account':'Log In';
 }
 async function authAction(){
@@ -1015,6 +1038,10 @@ async function authAction(){
   if(!email){showToast('⚠ Enter your email');return;}
   if(!email.includes('@')){showToast('⚠ Enter a valid email');return;}
   if(pass.length<8){showToast('⚠ Password must be at least 8 characters');return;}
+  if(authTab==='signup'){
+    const confirm=document.getElementById('modal-confirm').value;
+    if(pass!==confirm){showToast('⚠ Passwords do not match');return;}
+  }
 
   const btn = document.getElementById('modal-btn');
   btn.textContent = '...'; btn.disabled = true;
