@@ -30,11 +30,14 @@
 }
 </script>
 <!-- Google Fonts loaded via JS only after cookie consent (GDPR) -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.11.0/dist/tabler-icons.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.5/purify.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{user-select:none;-webkit-user-select:none}
+input,textarea,.chat-input,.sbot-input{user-select:text;-webkit-user-select:text}
+.msg-bubble,.chat-msgs,.sbot-msgs{user-select:text;-webkit-user-select:text;cursor:auto}
 :root{
   --teal:#00C9A7;--teal2:#00A88C;--teal3:#007A65;
   --bg:#060D0B;--bg2:#0C1A16;--bg3:#112219;--bg4:#162C22;
@@ -972,7 +975,8 @@ function toggleFAQ(i){
 // ══════════════════════════════════════════════
 const _supa = supabase.createClient(
   'https://atimsnxrlrsidjvswiln.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF0aW1zbnhybHJzaWRqdnN3aWxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1MDU4NzQsImV4cCI6MjA5NzA4MTg3NH0.OcK6ZOjIILOlAyG8pVXuHQmWHBPcfsKIxzXmanC1glc'
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF0aW1zbnhybHJzaWRqdnN3aWxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1MDU4NzQsImV4cCI6MjA5NzA4MTg3NH0.OcK6ZOjIILOlAyG8pVXuHQmWHBPcfsKIxzXmanC1glc',
+  { auth: { storage: window.localStorage, autoRefreshToken: true, persistSession: true, detectSessionInUrl: false } }
 );
 
 let _user = null;
