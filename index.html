@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="google-site-verification" content="JLziv0FbCDrQN8UMZhnOK8AwwwR7GR-us2NdArfroUM" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PawDoc — AI Vet Assistant</title>
 <meta name="description" content="PawDoc is an AI-powered veterinary assistant that analyzes your pet's symptoms instantly. Available in 8 languages for all animals. Try free — no account needed.">
@@ -239,6 +240,8 @@ body{font-family:'Bricolage Grotesque',sans-serif;color:var(--txt);overflow-x:hi
 .mtab.on{background:var(--teal);color:#000}
 .minput{width:100%;padding:11px 14px;background:var(--bg);border:1px solid var(--border);border-radius:9px;color:var(--txt);font-size:13px;font-family:'Bricolage Grotesque',sans-serif;outline:none;transition:.15s;margin-bottom:10px}
 .minput:focus{border-color:var(--teal)}
+.modal-google-btn{width:100%;padding:11px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--color-background-secondary, #fff);color:var(--txt1);display:flex;align-items:center;justify-content:center;gap:10px;transition:.15s;font-family:'Bricolage Grotesque',sans-serif}
+.modal-google-btn:hover{background:var(--surface2);border-color:var(--txt3)}
 .modal-btn{width:100%;padding:13px;background:var(--teal);border:none;border-radius:10px;font-size:14px;font-weight:700;color:#000;cursor:pointer;font-family:'Bricolage Grotesque',sans-serif;transition:.15s;margin-top:4px}
 .modal-btn:hover{background:var(--teal2)}
 .modal-close{position:absolute;top:16px;right:16px;background:rgba(0,201,167,.08);border:1px solid var(--border);color:var(--txt3);width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px}
@@ -546,6 +549,8 @@ body{font-family:'Bricolage Grotesque',sans-serif;color:var(--txt);overflow-x:hi
       </button>
     </div>
     <button class="modal-btn" id="modal-btn" onclick="authAction()">Create Free Account</button>
+    <div style="display:flex;align-items:center;gap:10px;margin:12px 0"><div style="flex:1;height:1px;background:var(--border)"></div><span style="font-size:12px;color:var(--txt4)">OR</span><div style="flex:1;height:1px;background:var(--border)"></div></div>
+    <button class="modal-google-btn" onclick="signInWithGoogle()"><svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.33 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.67 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg> Continue with Google</button>
   </div>
 </div>
 
@@ -870,10 +875,10 @@ Respond in language: ${lang}. Be concise, warm, and helpful.`;
         {type:'text',text:txt||'What do you see? Is there anything concerning?'}
       ]};
     }
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
+    const res=await fetch('https://old-frost-9fa5.q97q4-9.workers.dev',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,system:systemPrompt,messages})
+      body:JSON.stringify({model:'gemini-2.0-flash',max_tokens:1000,system:systemPrompt,messages})
     });
     const data=await res.json();
     hideTyping();
@@ -997,6 +1002,14 @@ function updateNavForUser(user){
     btn.textContent = user.email.split('@')[0];
     btn.onclick = () => signOut();
   }
+}
+
+async function signInWithGoogle(){
+  const {error} = await _supa.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: 'https://weeds-ite.github.io/my-site/' }
+  });
+  if(error) showToast('⚠ ' + error.message);
 }
 
 async function signOut(){
@@ -1177,10 +1190,10 @@ LANGUAGES: EN, DE, AR, TR, RU, FR, ES, ZH with RTL support for Arabic.
 Answer in the user's language (${lang}). Be concise, friendly, and helpful. Max 3 sentences.`;
 
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
+    const res=await fetch('https://old-frost-9fa5.q97q4-9.workers.dev',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,system,messages:[{role:'user',content:txt}]})
+      body:JSON.stringify({model:'gemini-2.0-flash',max_tokens:1000,system,messages:[{role:'user',content:txt}]})
     });
     const data=await res.json();
     sbotHideTyping();
